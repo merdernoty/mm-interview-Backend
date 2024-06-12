@@ -1,3 +1,4 @@
+import { User } from "src/modules/users/model/user.model";
 import { DataSource } from "typeorm";
 
 export const databaseProviders = [
@@ -11,7 +12,7 @@ export const databaseProviders = [
         username: process.env.USERNAME,
         password: process.env.PASSWORD,
         database: process.env.DATABASE,
-        entities: [],
+        entities: [User],
         synchronize: true,
         ssl: {
           rejectUnauthorized: false,
