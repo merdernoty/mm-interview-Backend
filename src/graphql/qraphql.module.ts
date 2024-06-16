@@ -5,11 +5,11 @@ import { join } from "path";
 
 @Module({
   imports: [
-    QraphqlModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), "src/schema.gql"),
       path: "/graphql",
+      playground: true, // Включаем GraphQL Playground
       context: ({ req }) => ({ req }),
     }),
   ],

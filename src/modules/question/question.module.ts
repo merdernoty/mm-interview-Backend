@@ -1,15 +1,23 @@
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { QuestionController } from "./question.controller";
-
-import { Module } from "@nestjs/common";
-import { Question } from "./model/question.model";
-import { QuestionService } from "./question.service";
-//import { QuestionResolver } from "./question.controller";
+import { Module, forwardRef } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { QuestionService } from './question.service';
+import { QuestionController } from './question.controller';
+import { Question } from './model/question.model';
+import { ThemeModule } from '../theme/theme.module'; // Импортируем ThemeModule с forwardRef()
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Question])],
-    controllers: [QuestionController],
-    providers: [QuestionService,],
-    exports: [QuestionService],
-  })
-  export class QuestionModule {}
+    imports: [
+        TypeOrmModule.forFeature([Question]),
+        forwardRef(() => ThemeModule), // Используем forwardRef() для ThemeModule
+    ],
+    providers: [
+        QuestionService,
+    ],
+    controllers: [
+        QuestionController,
+    ],
+    exports: [
+        QuestionService,
+    ],
+})
+export class QuestionModule {}

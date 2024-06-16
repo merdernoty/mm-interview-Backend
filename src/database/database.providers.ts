@@ -9,26 +9,15 @@ export const databaseProviders = [
     useFactory: async () => {
       const dataSource = new DataSource({
         type: "postgres",
-        host: process.env.HOST,
-        port: Number(process.env.PORT),
-        username: process.env.USERNAME,
-        password: process.env.PASSWORD,
-        database: process.env.DATABASE,
-        entities: [User,Question,Theme],
+        host: process.env.DB_HOST,
+        port: Number(process.env.DB_PORT),
+        username: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+        entities: [User, Question, Theme],
         synchronize: true,
-        ssl: {
-          rejectUnauthorized: false,
-        },
+        ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
       });
-
-      try {
-        await dataSource.initialize();
-        console.log("Database connection successfully");
-      } catch (error) {
-        console.error("Database connection failed", error);
-        throw error;
-      }
-
       return dataSource;
     },
   },

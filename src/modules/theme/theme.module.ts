@@ -1,15 +1,21 @@
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { ThemeController } from "./theme.controller";
-
-import { Module } from "@nestjs/common";
-import { Theme } from "./model/theme.model";
-import { ThemeService } from "./theme.service";
-//import { ThemeResolver } from "./question.controller";
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ThemeService } from './theme.service';
+import { ThemeController } from './theme.controller';
+import { Theme } from './model/theme.model';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Theme])],
-    controllers: [ThemeController],
-    providers: [ThemeService],
-    exports: [ThemeService],
-  })
-  export class QuestionModule {}
+    imports: [
+        TypeOrmModule.forFeature([Theme]),
+    ],
+    providers: [
+        ThemeService,
+    ],
+    controllers: [
+        ThemeController,
+    ],
+    exports: [
+        TypeOrmModule.forFeature([Theme]), // Экспортируем TypeOrmModule с фичами темы
+    ],
+})
+export class ThemeModule {}
