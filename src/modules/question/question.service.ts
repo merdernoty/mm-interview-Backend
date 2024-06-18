@@ -27,20 +27,21 @@ export class QuestionService {
   }
 
   async create(createQuestionInput: CreateQuestionInput): Promise<Question> {
-    // Находим тему по themeId
-    const theme = await this.themeRepository.findOne({ where: { id: createQuestionInput.themeId } });
+    const { question, answers, themeId } = createQuestionInput;
 
+
+    const theme = await  this.themeRepository.findOne({ where: { id: themeId } });
     if (!theme) {
-      throw new NotFoundException(`Theme with ID ${createQuestionInput.themeId} not found`);
+      throw new Error(`Theme with id ${themeId} not found`);
     }
 
-    // Создаем вопрос и сохраняем его
-    const question = this.questionRepository.create({
-      question: createQuestionInput.question,
-      answers: createQuestionInput.answers,
-      theme: theme,
-    });
-    return this.questionRepository.save(question);
+
+    const newQuestion = new Question();
+    newQuestion.question = question;
+    newQuestion.answers = answers;
+    newQuestion.theme = theme;
+
+    return await this.questionRepository.save(newQuestion);
   }
 
   async remove(id: number): Promise<boolean> {

@@ -3,15 +3,12 @@ import { ApiProperty } from '@nestjs/swagger';
 
 @InputType()
 export class CreateThemeInput {
+//todo добавить валидацию
     @Field()
-    @ApiProperty({ description: "Title" })
+    @ApiProperty({ description: "Title of the theme" })
     title: string;
 
     @Field()
-    @ApiProperty({ description: "Description" })
+    @ApiProperty({ description: "Description of the theme" })
     description: string;
-
-    @Field(() => [Number])
-    @ApiProperty({ description: "List of question IDs" })
-    questionIds: number[];
 }

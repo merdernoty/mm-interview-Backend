@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { Theme } from "./model/Theme.model";
+import { Theme } from "./model/theme.model";  // Исправляем путь
 import { CreateThemeInput } from "./dto/create-theme.input";
 
 @Injectable()
@@ -12,7 +12,11 @@ export class ThemeService {
   ) {}
 
   async findOneById(id: number): Promise<Theme | undefined> {
-    return this.themeRepository.findOne({ where: { id } });
+    const theme = await this.themeRepository.findOne({ where: { id } });
+    if (!theme) {
+      throw new NotFoundException(`Theme with ID ${id} not found`);
+    }
+    return theme;
   }
 
   async findOneByTitle(title: string): Promise<Theme | undefined> {
@@ -20,7 +24,7 @@ export class ThemeService {
   }
 
   async findAll(): Promise<Theme[]> {
-    return this.themeRepository.find();
+    return this.themeRepository.find({ relations: ['questions'] });  // Включаем связанные вопросы
   }
 
   async create(createThemeInput: CreateThemeInput): Promise<Theme> {
