@@ -16,7 +16,6 @@ import { databaseProviders } from "./database.providers";
       rootPath: path.resolve(__dirname, "static"),
     }),
     TypeOrmModule.forRootAsync({
-
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         type: "postgres",
@@ -37,8 +36,6 @@ import { databaseProviders } from "./database.providers";
     }),
   ],
   controllers: [],
-  providers: [
-    ...databaseProviders,
-  ],
+  providers: [...databaseProviders],
 })
 export class DatabaseModule {}

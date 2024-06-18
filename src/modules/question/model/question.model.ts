@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
 import { ObjectType, Field, ID } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { Theme } from '../../theme/model/theme.model';
+import { Theme } from "../../theme/model/theme.model";
 
 @ObjectType()
 @Entity()
@@ -11,7 +11,7 @@ export class Question {
   id: number;
 
   @Field()
-  @Column({nullable: false})
+  @Column({ nullable: false })
   @ApiProperty({ description: "Question" })
   question: string;
 
@@ -21,6 +21,6 @@ export class Question {
   answers: string[];
 
   @Field(() => Theme)
-  @ManyToOne(() => Theme, theme => theme.questions)
+  @ManyToOne(() => Theme, (theme) => theme.questions)
   theme: Theme;
 }

@@ -16,7 +16,8 @@ export const databaseProviders = [
         database: process.env.DB_NAME,
         entities: [User, Question, Theme],
         synchronize: true,
-        ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
+        ssl:
+          process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : false,
       });
       return dataSource;
     },

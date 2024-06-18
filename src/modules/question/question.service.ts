@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {HttpStatus, Injectable, NotFoundException} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Question } from "./model/question.model";
@@ -14,7 +14,7 @@ export class QuestionService {
     private readonly themeRepository: Repository<Theme>,
   ) {}
 
-  async findOneByQuestion(question: string): Promise<Question | undefined> {  // delete undefined
+  async findOneByQuestion(question: string): Promise<Question> {
     return this.questionRepository.findOne({ where: { question } });
   }
 
@@ -22,34 +22,44 @@ export class QuestionService {
     return this.questionRepository.find();
   }
 
-  async findOne(id: number): Promise<Question | undefined> {    // delete undefined
+  async findOne(id: number): Promise<Question>{
     return this.questionRepository.findOne({ where: { id } });
   }
 
-  async create(createQuestionInput: CreateQuestionInput): Promise<Question> {
-    const { question, answers, themeId } = createQuestionInput;
+  async create(dto: CreateQuestionInput): Promise<Question | { status: string; message: string }> {
+    const { themeId, ...dtoFields } = dto;
 
     const theme = await this.themeRepository.findOne({
       where: { id: themeId },
     });
 
     if (!theme) {
-      throw new Error(`Theme with id ${themeId} not found`);
+      return {
+        status: 'error',
+        message: `Theme with id ${themeId} not found`,
+      };
     }
 
-    const newQuestion = new Question();
-    newQuestion.question = question;
-    newQuestion.answers = answers;    //use ...dto, theme
-    newQuestion.theme = theme;
+    const newQuestion = this.questionRepository.create({
+      ...dtoFields,
+      theme,
+    });
 
     return await this.questionRepository.save(newQuestion);
   }
 
-  async remove(id: number): Promise<boolean> {
+
+
+  async remove(id: number): Promise<{ status: HttpStatus, message: string }> {
     const result = await this.questionRepository.delete(id);
     if (result.affected === 0) {
-      throw new NotFoundException(`Question with ID ${id} not found`);        //make response in format {status, message}
+      throw new NotFoundException(`Question with ID ${id} not found`);
     }
-    return true;
+
+    return {
+      status: HttpStatus.OK,
+      message: "successful",
+    };
   }
 }
+

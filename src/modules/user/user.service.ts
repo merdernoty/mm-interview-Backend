@@ -6,23 +6,23 @@ import { CreateUserInput } from "./dto/create-user.input";
 
 @Injectable()
 export class UserService {
-    constructor(
-        @InjectRepository(User)
-        private readonly userRepository: Repository<User>
-    ) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
 
-    async findOneByUsername(userName: string): Promise<User | undefined> {
-        return this.userRepository.findOne({ where: { userName } });
-    }
+  async findOneByUsername(userName: string): Promise<User | undefined> {
+    return this.userRepository.findOne({ where: { userName } });
+  }
 
-    async findAll(): Promise<User[]> {
-        return this.userRepository.find();
-    }
+  async findAll(): Promise<User[]> {
+    return this.userRepository.find();
+  }
 
-    async create(createUserInput: CreateUserInput): Promise<User> {
-        const theme = this.userRepository.create({
-            ...createUserInput,
-        });
-        return this.userRepository.save(theme);
-    }
+  async create(dto: CreateUserInput): Promise<User> {
+    const theme = this.userRepository.create({
+      ...dto,
+    });
+    return this.userRepository.save(theme);
+  }
 }

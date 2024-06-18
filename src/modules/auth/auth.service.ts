@@ -7,7 +7,7 @@ import * as bcrypt from "bcryptjs";
 export class AuthService {
   constructor(
     private readonly usersService: UserService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
   ) {}
   async validateUser(userName: string, pass: string): Promise<any> {
     const user = await this.usersService.findOneByUsername(userName);

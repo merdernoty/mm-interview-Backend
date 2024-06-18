@@ -21,7 +21,7 @@ export class Theme {
   description: string;
 
   @Field(() => [Question])
-  @OneToMany(() => Question, question => question.theme)
+  @OneToMany(() => Question, (question) => question.theme)
   @ApiProperty({ description: "List of questions" })
   questions: Question[];
 }
