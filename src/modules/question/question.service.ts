@@ -8,10 +8,10 @@ import { Theme } from "../theme/model/theme.model";
 @Injectable()
 export class QuestionService {
   constructor(
-      @InjectRepository(Question)
-      private readonly questionRepository: Repository<Question>,
-      @InjectRepository(Theme) // Инжектим репозиторий темы
-      private readonly themeRepository: Repository<Theme>
+    @InjectRepository(Question)
+    private readonly questionRepository: Repository<Question>,
+    @InjectRepository(Theme) // Инжектим репозиторий темы
+    private readonly themeRepository: Repository<Theme>,
   ) {}
 
   async findOneByQuestion(question: string): Promise<Question | undefined> {
@@ -29,12 +29,13 @@ export class QuestionService {
   async create(createQuestionInput: CreateQuestionInput): Promise<Question> {
     const { question, answers, themeId } = createQuestionInput;
 
+    const theme = await this.themeRepository.findOne({
+      where: { id: themeId },
+    });
 
-    const theme = await  this.themeRepository.findOne({ where: { id: themeId } });
     if (!theme) {
       throw new Error(`Theme with id ${themeId} not found`);
     }
-
 
     const newQuestion = new Question();
     newQuestion.question = question;

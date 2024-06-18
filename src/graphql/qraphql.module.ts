@@ -7,9 +7,9 @@ import { join } from "path";
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: join(process.cwd(), "src/schema.gql"),
+      autoSchemaFile: join(process.cwd(), "src/graphql/schema.gql"),
       path: "/graphql",
-      playground: true, // Включаем GraphQL Playground
+      playground: true,
       context: ({ req }) => ({ req }),
     }),
   ],
