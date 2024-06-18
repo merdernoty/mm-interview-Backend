@@ -13,8 +13,8 @@ export class QuestionController {
     @ApiOperation({ summary: 'Create a new question' })
     @ApiResponse({ status: 201, description: 'The question has been successfully created.', type: Question })
     @ApiResponse({ status: 400, description: 'Invalid input.' })
-    async create(@Body() createQuestionInput: CreateQuestionInput): Promise<Question> {
-        return this.questionService.create(createQuestionInput);
+    async create(@Body() createQuestionInput: CreateQuestionInput): Promise<Question> { // rename on dto
+        return this.questionService.create(createQuestionInput);                       // rename on dto
     }
 
     @Get()
@@ -28,10 +28,10 @@ export class QuestionController {
     @ApiOperation({ summary: 'Get a question by ID' })
     @ApiResponse({ status: 200, description: 'Return the question.', type: Question })
     @ApiResponse({ status: 404, description: 'Question not found.' })
-    async findOne(@Param('id') id: string): Promise<Question> {
-        const question = await this.questionService.findOne(+id);
-        if (!question) {
-            throw new NotFoundException(`Question with ID ${id} not found`);
+    async findOne(@Param('id') id: string): Promise<Question> {  //string todo -void, add response
+        const question = await this.questionService.findOne(+id); //number
+        if (!question) {            
+            throw new NotFoundException(`Question with ID ${id} not found`); //move to servise
         }
         return question;
     }
@@ -40,10 +40,10 @@ export class QuestionController {
     @ApiOperation({ summary: 'Delete a question by ID' })
     @ApiResponse({ status: 200, description: 'The question has been successfully deleted.' })
     @ApiResponse({ status: 404, description: 'Question not found.' })
-    async remove(@Param('id') id: string): Promise<void> {
-        const deleted = await this.questionService.remove(+id);
+    async remove(@Param('id') id: string): Promise<void> {     //string todo -void, add response
+        const deleted = await this.questionService.remove(+id);  //number
         if (!deleted) {
-            throw new NotFoundException(`Question with ID ${id} not found`);
+            throw new NotFoundException(`Question with ID ${id} not found`); //move to servise
         }
     }
 }
