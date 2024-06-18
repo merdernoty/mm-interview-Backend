@@ -8,8 +8,8 @@ export class ThemeController {
     constructor(private readonly themeService: ThemeService) {}
 
     @Post()
-    async create(@Body() createThemeInput: CreateThemeInput): Promise<Theme> {
-        return this.themeService.create(createThemeInput);
+    async create(@Body() createThemeInput: CreateThemeInput): Promise<Theme> {  //rename in dto
+        return this.themeService.create(createThemeInput);  
     }
 
     @Get()
@@ -18,17 +18,17 @@ export class ThemeController {
     }
 
     @Get(':id')
-    async findOne(@Param('id') id: string): Promise<Theme> {
-        return this.themeService.findOneById(+id);
+    async findOne(@Param('id') id: string): Promise<Theme> { //string
+        return this.themeService.findOneById(+id); //number
     }
 
     @Put(':id')
-    async update(@Param('id') id: string, @Body() updatedTheme: Partial<Theme>): Promise<Theme> {
-        return this.themeService.update(+id, updatedTheme);
+    async update(@Param('id') id: string, @Body() updatedTheme: Partial<Theme>): Promise<Theme> { //string
+        return this.themeService.update(+id, updatedTheme);  //number
     }
 
     @Delete(':id')
-    async remove(@Param('id') id: string): Promise<void> {
+    async remove(@Param('id') id: string): Promise<void> { // delete void and add response {status, message}
         await this.themeService.remove(+id);
     }
 }
