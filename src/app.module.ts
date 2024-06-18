@@ -1,3 +1,5 @@
+import { OpenaiModule } from "./modules/openai/openai.module";
+import { OpenaiService } from "./modules/openai/openai.service";
 import { QraphqlModule } from "./graphql/qraphql.module";
 import { AuthModule } from "./modules/auth/auth.module";
 import { UsersModule } from "./modules/users/user.module";
@@ -6,7 +8,13 @@ import { Module } from "@nestjs/common";
 import { UsersResolver } from "./modules/users/users.resolver";
 
 @Module({
-  imports: [QraphqlModule, AuthModule, UsersModule, DatabaseModule],
+  imports: [
+    OpenaiModule,
+    QraphqlModule,
+    AuthModule,
+    UsersModule,
+    DatabaseModule,
+  ],
   controllers: [],
   providers: [UsersResolver],
 })
