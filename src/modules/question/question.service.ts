@@ -10,11 +10,11 @@ export class QuestionService {
   constructor(
     @InjectRepository(Question)
     private readonly questionRepository: Repository<Question>,
-    @InjectRepository(Theme) // Инжектим репозиторий темы
+    @InjectRepository(Theme)
     private readonly themeRepository: Repository<Theme>,
   ) {}
 
-  async findOneByQuestion(question: string): Promise<Question | undefined> {
+  async findOneByQuestion(question: string): Promise<Question | undefined> {  // delete undefined
     return this.questionRepository.findOne({ where: { question } });
   }
 
@@ -22,7 +22,7 @@ export class QuestionService {
     return this.questionRepository.find();
   }
 
-  async findOne(id: number): Promise<Question | undefined> {
+  async findOne(id: number): Promise<Question | undefined> {    // delete undefined
     return this.questionRepository.findOne({ where: { id } });
   }
 
@@ -39,7 +39,7 @@ export class QuestionService {
 
     const newQuestion = new Question();
     newQuestion.question = question;
-    newQuestion.answers = answers;
+    newQuestion.answers = answers;    //use ...dto, theme
     newQuestion.theme = theme;
 
     return await this.questionRepository.save(newQuestion);
@@ -48,7 +48,7 @@ export class QuestionService {
   async remove(id: number): Promise<boolean> {
     const result = await this.questionRepository.delete(id);
     if (result.affected === 0) {
-      throw new NotFoundException(`Question with ID ${id} not found`);
+      throw new NotFoundException(`Question with ID ${id} not found`);        //make response in format {status, message}
     }
     return true;
   }
