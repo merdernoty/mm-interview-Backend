@@ -40,7 +40,7 @@ export class QuestionController {
     @ApiOperation({ summary: 'Delete a question by ID' })
     @ApiResponse({ status: 200, description: 'The question has been successfully deleted.' })
     @ApiResponse({ status: 404, description: 'Question not found.' })
-    async remove(@Param('id') id: number): Promise<{ status: HttpStatus; message: string }> {
+    async remove(@Param('id') id: number): Promise<{ statusCode: HttpStatus; message: string }> {
         return  await this.questionService.remove(id);
 
     }

@@ -2,7 +2,7 @@ import {Controller, Get, Post, Body, Param, Delete, Put, HttpStatus} from '@nest
 import { ThemeService } from './theme.service';
 import { CreateThemeInput } from './dto/create-theme.input';
 import { Theme } from './model/theme.model';
-import * as http from "node:http";
+
 
 @Controller('themes')
 export class ThemeController {
@@ -29,7 +29,7 @@ export class ThemeController {
     }
 
     @Delete(':id')
-    async remove(@Param('id') id: number): Promise<{ status: HttpStatus, message: string }> {
+    async remove(@Param('id') id: number): Promise<{ statusCode: HttpStatus, message: string }> {
         return await this.themeService.remove(id);
     }
 

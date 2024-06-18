@@ -42,7 +42,7 @@ export class ThemeService {
     return this.themeRepository.save(theme);
   }
 
-  async remove(id: number): Promise<{ status: HttpStatus; message: string }> {
+  async remove(id: number): Promise<{ statusCode: HttpStatus; message: string }> {
     const theme = await this.themeRepository.findOne({ where: { id } });
     if (!theme) {
       throw new NotFoundException(`Theme with ID ${id} not found`);
@@ -51,8 +51,8 @@ export class ThemeService {
     await this.themeRepository.remove(theme);
 
     return {
-      status: HttpStatus.OK,
-      message: `successful`
+      statusCode: HttpStatus.OK,
+      message: "successful"
     };
   }
 

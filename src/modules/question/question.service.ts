@@ -50,14 +50,14 @@ export class QuestionService {
 
 
 
-  async remove(id: number): Promise<{ status: HttpStatus, message: string }> {
+  async remove(id: number): Promise<{ statusCode: HttpStatus, message: string }> {
     const result = await this.questionRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException(`Question with ID ${id} not found`);
     }
 
     return {
-      status: HttpStatus.OK,
+      statusCode: HttpStatus.OK,
       message: "successful",
     };
   }
