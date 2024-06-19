@@ -11,7 +11,7 @@ export class AuthResolver {
   async login(@Args("authInput") authInput: AuthInput) {
     const user = await this.authService.validateUser(
       authInput.password,
-      authInput.username
+      authInput.username,
     );
     if (!user) {
       throw new Error("Invalid credentials");

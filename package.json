@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\" ",
     "start": "cross-env NODE_ENV=production nest start",
     "start:dev": "cross-env NODE_ENV=development nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -37,6 +37,7 @@
     "class-validator": "^0.14.1",
     "crossenv": "^0.0.2-security",
     "graphql": "^16.8.2",
+    "graphql-tools": "^9.0.1",
     "nestjs-rate-limiter": "^3.1.0",
     "openai": "^4.51.0",
     "passport": "^0.7.0",

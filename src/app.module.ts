@@ -1,21 +1,23 @@
 import { OpenaiModule } from "./modules/openai/openai.module";
-import { OpenaiService } from "./modules/openai/openai.service";
 import { QraphqlModule } from "./graphql/qraphql.module";
 import { AuthModule } from "./modules/auth/auth.module";
-import { UsersModule } from "./modules/users/user.module";
+import { UserModule } from "./modules/user/user.module";
 import { DatabaseModule } from "./database/database.module";
 import { Module } from "@nestjs/common";
-import { UsersResolver } from "./modules/users/users.resolver";
+import { QuestionModule } from "./modules/question/question.module";
+import { ThemeModule } from "./modules/theme/theme.module";
 
 @Module({
   imports: [
     OpenaiModule,
     QraphqlModule,
     AuthModule,
-    UsersModule,
+    UserModule,
+    QuestionModule,
+    ThemeModule,
     DatabaseModule,
   ],
   controllers: [],
-  providers: [UsersResolver],
+  providers: [],
 })
 export class AppModule {}
