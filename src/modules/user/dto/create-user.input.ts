@@ -1,17 +1,17 @@
 import { InputType, Field } from "@nestjs/graphql";
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from "@nestjs/swagger";
 
 @InputType()
 export class CreateUserInput {
   @Field()
-  @ApiProperty({ description: 'Username' })
+  @ApiProperty({ description: "Username" })
   userName: string;
 
   @Field()
-  @ApiProperty({ description: 'Email' })
+  @ApiProperty({ description: "Email" })
   email: string;
 
   @Field()
-  @ApiProperty({ description: 'Password' })
+  @ApiProperty({ description: "Password" })
   password: string;
 }
