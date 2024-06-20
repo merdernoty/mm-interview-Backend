@@ -26,9 +26,7 @@ export class QuestionService {
     return this.questionRepository.findOne({ where: { id } });
   }
 
-  async create(
-    dto: CreateQuestionInput,
-  ): Promise<Question | { status: string; message: string }> {
+  async create(dto: CreateQuestionInput): Promise<Question | { status: string; message: string }> {
     const { themeId, ...dtoFields } = dto;
 
     const theme = await this.themeRepository.findOne({
@@ -50,9 +48,7 @@ export class QuestionService {
     return await this.questionRepository.save(newQuestion);
   }
 
-  async remove(
-    id: number,
-  ): Promise<{ statusCode: HttpStatus; message: string }> {
+  async remove(id: number): Promise<{ statusCode: HttpStatus; message: string }> {
     const result = await this.questionRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException(`Question with ID ${id} not found`);

@@ -8,15 +8,7 @@ import { QuestionModule } from "./modules/question/question.module";
 import { ThemeModule } from "./modules/theme/theme.module";
 
 @Module({
-  imports: [
-    OpenaiModule,
-    QraphqlModule,
-    AuthModule,
-    UserModule,
-    QuestionModule,
-    ThemeModule,
-    DatabaseModule,
-  ],
+  imports: [OpenaiModule, QraphqlModule, AuthModule, UserModule, QuestionModule, ThemeModule, DatabaseModule],
   controllers: [],
   providers: [],
 })

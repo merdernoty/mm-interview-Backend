@@ -43,9 +43,7 @@ export class ThemeService {
     return this.themeRepository.save(theme);
   }
 
-  async remove(
-    id: number,
-  ): Promise<{ statusCode: HttpStatus; message: string }> {
+  async remove(id: number): Promise<{ statusCode: HttpStatus; message: string }> {
     const theme: Theme = await this.themeRepository.findOne({ where: { id } });
     if (!theme) {
       throw new NotFoundException(`Theme with ID ${id} not found`);

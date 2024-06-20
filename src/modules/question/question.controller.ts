@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Delete,
-  Body,
-  Param,
-  NotFoundException,
-  HttpStatus,
-} from "@nestjs/common";
+import { Controller, Get, Post, Delete, Body, Param, NotFoundException, HttpStatus } from "@nestjs/common";
 import { QuestionService } from "./question.service";
 import { CreateQuestionInput } from "./dto/create-question.input";
 import { Question } from "./model/question.model";
@@ -66,9 +57,7 @@ export class QuestionController {
     description: "The question has been successfully deleted.",
   })
   @ApiResponse({ status: 404, description: "Question not found." })
-  async remove(
-    @Param("id") id: number,
-  ): Promise<{ statusCode: HttpStatus; message: string }> {
+  async remove(@Param("id") id: number): Promise<{ statusCode: HttpStatus; message: string }> {
     return await this.questionService.remove(id);
   }
 }

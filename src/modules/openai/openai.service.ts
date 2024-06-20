@@ -26,8 +26,7 @@ export class OpenaiService {
 
     if (error.response) {
       const statusCode = error.response.status;
-      const message =
-        error.response.data?.error?.message || "Неизвестная ошибка";
+      const message = error.response.data?.error?.message || "Неизвестная ошибка";
 
       if (statusCode === 429) {
         throw new HttpException(

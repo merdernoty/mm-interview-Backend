@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  Put,
-  HttpStatus,
-} from "@nestjs/common";
+import { Controller, Get, Post, Body, Param, Delete, Put, HttpStatus } from "@nestjs/common";
 import { ThemeService } from "./theme.service";
 import { CreateThemeInput } from "./dto/create-theme.input";
 import { Theme } from "./model/theme.model";
@@ -32,17 +23,12 @@ export class ThemeController {
   }
 
   @Put(":id")
-  async update(
-    @Param("id") id: number,
-    @Body() updatedTheme: Partial<Theme>,
-  ): Promise<Theme> {
+  async update(@Param("id") id: number, @Body() updatedTheme: Partial<Theme>): Promise<Theme> {
     return this.themeService.update(id, updatedTheme);
   }
 
   @Delete(":id")
-  async remove(
-    @Param("id") id: number,
-  ): Promise<{ statusCode: HttpStatus; message: string }> {
+  async remove(@Param("id") id: number): Promise<{ statusCode: HttpStatus; message: string }> {
     return await this.themeService.remove(id);
   }
 }

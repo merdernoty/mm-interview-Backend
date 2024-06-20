@@ -26,9 +26,7 @@ export class QuestionResolver {
   }
 
   @Mutation(() => Question)
-  removeQuestion(
-    @Args("id", { type: () => Int }) id: number,
-  ): Promise<{ statusCode: HttpStatus; message: string }> {
+  removeQuestion(@Args("id", { type: () => Int }) id: number): Promise<{ statusCode: HttpStatus; message: string }> {
     return this.questionService.remove(id);
   }
 }
