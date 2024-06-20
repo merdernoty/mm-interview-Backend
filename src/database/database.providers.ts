@@ -6,7 +6,7 @@ import { DataSource } from "typeorm";
 export const databaseProviders = [
   {
     provide: "DATA_SOURCE",
-    useFactory: async () => {
+    useFactory: async ():Promise<DataSource> => {
       const dataSource = new DataSource({
         type: "postgres",
         host: process.env.DB_HOST,
