@@ -8,19 +8,19 @@ export class QuestionResolver {
   constructor(private readonly questionService: QuestionService) {}
 
   @Query(() => [Question], { name: "questions" })
-  findAll() {
+  findAll() :Promise<Question[]> {
     return this.questionService.findAll();
   }
 
   @Query(() => Question, { name: "question" })
-  findOne(@Args("id", { type: () => Int }) id: number) {
+  findOne(@Args("id", { type: () => Int }) id: number) :Promise<Question> {
     return this.questionService.findOne(id);
   }
 
   @Mutation(() => Question)
   createQuestion(
     @Args("createQuestionInput") createQuestionInput: CreateQuestionInput,
-  ) {
+  ): Promise<Question | { status: string; message: string }>{
     return this.questionService.create(createQuestionInput);
   }
 

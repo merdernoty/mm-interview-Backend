@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 import { ObjectType, Field, ID } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
+import { Question } from "../../question/model/question.model";
 
 @ObjectType()
 @Entity()
@@ -23,5 +24,5 @@ export class User {
 
   @ApiProperty({ description: "Favorite questions", type: [String] })
   @Column({ type: "jsonb", nullable: true })
-  favoriteQuestions: any[];
+  favoriteQuestions: Question[];
 }

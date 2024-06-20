@@ -1,4 +1,4 @@
-import {HttpStatus, Injectable, NotFoundException} from "@nestjs/common";
+import { HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Question } from "./model/question.model";
@@ -22,11 +22,13 @@ export class QuestionService {
     return this.questionRepository.find();
   }
 
-  async findOne(id: number): Promise<Question>{
+  async findOne(id: number): Promise<Question> {
     return this.questionRepository.findOne({ where: { id } });
   }
 
-  async create(dto: CreateQuestionInput): Promise<Question | { status: string; message: string }> {
+  async create(
+    dto: CreateQuestionInput,
+  ): Promise<Question | { status: string; message: string }> {
     const { themeId, ...dtoFields } = dto;
 
     const theme = await this.themeRepository.findOne({
@@ -35,7 +37,7 @@ export class QuestionService {
 
     if (!theme) {
       return {
-        status: 'error',
+        status: "error",
         message: `Theme with id ${themeId} not found`,
       };
     }
@@ -48,9 +50,9 @@ export class QuestionService {
     return await this.questionRepository.save(newQuestion);
   }
 
-
-
-  async remove(id: number): Promise<{ statusCode: HttpStatus, message: string }> {
+  async remove(
+    id: number,
+  ): Promise<{ statusCode: HttpStatus; message: string }> {
     const result = await this.questionRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException(`Question with ID ${id} not found`);
@@ -62,4 +64,3 @@ export class QuestionService {
     };
   }
 }
-
