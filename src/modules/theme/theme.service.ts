@@ -1,4 +1,4 @@
-import {HttpStatus, Injectable, NotFoundException} from "@nestjs/common";
+import { HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Theme } from "./model/theme.model"; // Исправляем путь
@@ -11,10 +11,11 @@ export class ThemeService {
     private readonly themeRepository: Repository<Theme>,
   ) {}
 
-  async findOneById(id: number): Promise<Theme | undefined> {  //delete undefined
+  async findOneById(id: number): Promise<Theme | undefined> {
+    //delete undefined
     const theme = await this.themeRepository.findOne({ where: { id } });
     if (!theme) {
-      throw new NotFoundException(`Theme with ID ${id} not found`);  //delete error
+      throw new NotFoundException(`Theme with ID ${id} not found`); //delete error
     }
     return theme;
   }
@@ -24,16 +25,16 @@ export class ThemeService {
   }
 
   async findAll(): Promise<Theme[]> {
-    return this.themeRepository.find({ relations: ['questions'] });
+    return this.themeRepository.find({ relations: ["questions"] });
   }
 
   async create(dto: CreateThemeInput): Promise<Theme> {
-    const theme = this.themeRepository.create(dto);   // rename in dto
+    const theme: Theme = this.themeRepository.create(dto);
     return this.themeRepository.save(theme);
   }
 
   async update(id: number, dto: Partial<Theme>): Promise<Theme> {
-    const theme = await this.themeRepository.findOne({ where: { id } });
+    const theme: Theme = await this.themeRepository.findOne({ where: { id } });
     if (!theme) {
       throw new NotFoundException(`Theme with ID ${id} not found`);
     }
@@ -42,8 +43,10 @@ export class ThemeService {
     return this.themeRepository.save(theme);
   }
 
-  async remove(id: number): Promise<{ statusCode: HttpStatus; message: string }> {
-    const theme = await this.themeRepository.findOne({ where: { id } });
+  async remove(
+    id: number,
+  ): Promise<{ statusCode: HttpStatus; message: string }> {
+    const theme: Theme = await this.themeRepository.findOne({ where: { id } });
     if (!theme) {
       throw new NotFoundException(`Theme with ID ${id} not found`);
     }
@@ -52,8 +55,7 @@ export class ThemeService {
 
     return {
       statusCode: HttpStatus.OK,
-      message: "successful"
+      message: "successful",
     };
   }
-
 }

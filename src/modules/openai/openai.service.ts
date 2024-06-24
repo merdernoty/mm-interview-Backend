@@ -22,15 +22,16 @@ export class OpenaiService {
   }
 
   private handleApiError(error: any): void {
-    this.logger.error('Ошибка при запросе к OpenAI API', error);
+    this.logger.error("Ошибка при запросе к OpenAI API", error);
 
     if (error.response) {
       const statusCode = error.response.status;
-      const message = error.response.data?.error?.message || 'Неизвестная ошибка';
+      const message =
+        error.response.data?.error?.message || "Неизвестная ошибка";
 
       if (statusCode === 429) {
         throw new HttpException(
-          'Вы превысили квоту. Пожалуйста, проверьте свой план и детали оплаты.',
+          "Вы превысили квоту. Пожалуйста, проверьте свой план и детали оплаты.",
           HttpStatus.TOO_MANY_REQUESTS,
         );
       } else if (statusCode >= 500) {
@@ -46,7 +47,7 @@ export class OpenaiService {
       }
     } else {
       throw new HttpException(
-        'Произошла ошибка при запросе к OpenAI API. Пожалуйста, повторите попытку позже.',
+        "Произошла ошибка при запросе к OpenAI API. Пожалуйста, повторите попытку позже.",
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

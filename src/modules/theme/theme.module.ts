@@ -4,7 +4,6 @@ import { ThemeService } from "./theme.service";
 import { ThemeController } from "./theme.controller";
 import { Theme } from "./model/theme.model";
 import { QraphqlModule } from "../../graphql/qraphql.module";
-import { QuestionResolver } from "../question/question.resolver";
 import { ThemeResolver } from "./theme.resolver";
 
 @Module({

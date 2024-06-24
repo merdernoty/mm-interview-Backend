@@ -5,7 +5,7 @@ import { CreateUserInput } from "./dto/create-user.input";
 import { GqlAuthGuard } from "src/guards/gql-auth.guard";
 import { UseGuards } from "@nestjs/common";
 
-@Resolver((of) => User)
+@Resolver(() => User)
 export class UserResolver {
   constructor(private readonly usersService: UserService) {}
 
