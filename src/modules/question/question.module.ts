@@ -4,14 +4,13 @@ import { QuestionService } from "./question.service";
 import { QuestionController } from "./question.controller";
 import { Question } from "./model/question.model";
 import { ThemeModule } from "../theme/theme.module";
-import { QuestionResolver } from "./question.resolver"; // Импортируем ThemeModule с forwardRef()
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Question]),
     forwardRef(() => ThemeModule),
   ],
-  providers: [QuestionService, QuestionResolver],
+  providers: [QuestionService],
   controllers: [QuestionController],
   exports: [QuestionService],
 })

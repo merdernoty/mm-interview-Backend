@@ -1,20 +1,25 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
-import { ObjectType, Field, ID } from "@nestjs/graphql";
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  Index,
+  ManyToOne,
+} from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { Question } from "../../question/model/question.model";
+import { Role } from "src/modules/roles/model/roles.model";
 
-@ObjectType()
 @Entity()
 export class User {
-  @Field(() => ID)
   @PrimaryGeneratedColumn()
+  @Index({ unique: true })
   id: number;
 
-  @Field()
+  @Index({ unique: true })
   @Column()
-  userName: string;
+  username: string;
 
-  @Field()
+  @Index({ unique: true })
   @Column()
   email: string;
 
@@ -25,4 +30,7 @@ export class User {
   @ApiProperty({ description: "Favorite questions", type: [String] })
   @Column({ type: "jsonb", nullable: true })
   favoriteQuestions: Question[];
+
+  @ManyToOne(() => Role, (role) => role.users)
+  role: Role;
 }

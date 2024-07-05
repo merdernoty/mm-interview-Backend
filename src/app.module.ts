@@ -1,3 +1,4 @@
+import { RolesModule } from "./modules/roles/roles.module";
 import { AuthModule } from "./modules/auth/auth.module";
 import { OpenaiModule } from "./modules/openai/openai.module";
 import { UserModule } from "./modules/user/user.module";
@@ -8,6 +9,7 @@ import { ThemeModule } from "./modules/theme/theme.module";
 
 @Module({
   imports: [
+    RolesModule,
     AuthModule,
     OpenaiModule,
     UserModule,
