@@ -7,6 +7,7 @@ import {
   Delete,
   Put,
   HttpStatus,
+  NotFoundException,
 } from "@nestjs/common";
 import { ThemeService } from "./theme.service";
 import { CreateThemeInput } from "./dto/create-theme.input";
@@ -17,26 +18,37 @@ export class ThemeController {
   constructor(private readonly themeService: ThemeService) {}
 
   @Post()
-  async create(@Body() createThemeInput: CreateThemeInput): Promise<Theme> {
-    return this.themeService.create(createThemeInput);
+  async create(
+    @Body() createThemeInput: CreateThemeInput,
+  ): Promise<Theme | { status: HttpStatus; message: string }> {
+    return await this.themeService.create(createThemeInput);
   }
 
   @Get()
-  async findAll(): Promise<Theme[]> {
-    return this.themeService.findAll();
+  async findAll(): Promise<Theme[] | { status: HttpStatus; message: string }> {
+    return await this.themeService.findAll();
   }
 
   @Get(":id")
-  async findOne(@Param("id") id: number): Promise<Theme> {
-    return this.themeService.findOneById(id);
+  async findOneById(
+    @Param("id") id: number,
+  ): Promise<Theme | { status: HttpStatus; message: string }> {
+    return await this.themeService.findOneById(id);
+  }
+
+  @Get(":title")
+  async findOneByTitle(
+    @Param("title") title: string,
+  ): Promise<Theme | { status: HttpStatus; message: string }> {
+    return await this.themeService.findOneByTitle(title);
   }
 
   @Put(":id")
   async update(
     @Param("id") id: number,
     @Body() updatedTheme: Partial<Theme>,
-  ): Promise<Theme> {
-    return this.themeService.update(id, updatedTheme);
+  ): Promise<Theme | { status: HttpStatus; message: string }> {
+    return await this.themeService.update(id, updatedTheme);
   }
 
   @Delete(":id")

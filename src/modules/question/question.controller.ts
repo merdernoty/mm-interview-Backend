@@ -28,7 +28,7 @@ export class QuestionController {
   @ApiResponse({ status: 400, description: "Invalid input." })
   async create(
     @Body() createQuestionInput: CreateQuestionInput,
-  ): Promise<Question | { status: string; message: string }> {
+  ): Promise<{ status: number; message: string }> {
     return this.questionService.create(createQuestionInput);
   }
 
@@ -39,8 +39,16 @@ export class QuestionController {
     description: "Return all questions.",
     type: [Question],
   })
-  async findAll(): Promise<Question[]> {
-    return this.questionService.findAll();
+  async findAll(): Promise<{ status: number; message: string } | Question[]> {
+    const questions = await this.questionService.findAll();
+    if (Array.isArray(questions)) {
+      return questions;
+    } else {
+      return {
+        status: questions.status,
+        message: questions.message,
+      };
+    }
   }
 
   @Get(":id")
@@ -51,7 +59,9 @@ export class QuestionController {
     type: Question,
   })
   @ApiResponse({ status: 404, description: "Question not found." })
-  async findOne(@Param("id") id: number): Promise<Question> {
+  async findOne(
+    @Param("id") id: number,
+  ): Promise<Question | { status: number; message: string }> {
     const question = await this.questionService.findOne(id);
     if (!question) {
       throw new NotFoundException(`Question with ID ${id} not found`);
@@ -68,7 +78,7 @@ export class QuestionController {
   @ApiResponse({ status: 404, description: "Question not found." })
   async remove(
     @Param("id") id: number,
-  ): Promise<{ statusCode: HttpStatus; message: string }> {
-    return await this.questionService.remove(id);
+  ): Promise<{ statusCode: number; message: string }> {
+    return this.questionService.remove(id);
   }
 }

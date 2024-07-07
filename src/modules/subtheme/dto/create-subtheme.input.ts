@@ -2,17 +2,13 @@ import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
 
 @InputType()
-export class CreateQuestionInput {
+export class CreateSubthemeInput {
   //todo добавить валидацию
   @Field()
-  @ApiProperty({ description: "Question" })
-  question: string;
-
-  @Field(() => [String])
-  @ApiProperty({ description: "List of answers" })
-  answers: string[];
+  @ApiProperty({ description: "Title of the theme" })
+  title: string;
 
   @Field()
   @ApiProperty({ description: "Theme ID" })
-  subthemeId: number;
+  themeId: number;
 }
