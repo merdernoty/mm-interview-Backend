@@ -8,7 +8,7 @@ import { Role } from "./model/roles.model";
 export class RolesService {
   constructor(
     @InjectRepository(Role)
-    private readonly roleRepository: Repository<Role>
+    private readonly roleRepository: Repository<Role>,
   ) {}
 
   async createRole(dto: CreateRoleDto): Promise<Role> {

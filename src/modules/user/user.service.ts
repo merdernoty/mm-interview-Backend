@@ -11,7 +11,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly rolesService: RolesService
+    private readonly rolesService: RolesService,
   ) {}
 
   async findOneByEmail(email: string): Promise<User> {
@@ -23,7 +23,7 @@ export class UserService {
   }
 
   async create(
-    dto: RegDto
+    dto: RegDto,
   ): Promise<{ statusCode: HttpStatus; message: string }> {
     try {
       const hashPassword = await bcrypt.hash(dto.password, 10);
@@ -40,14 +40,17 @@ export class UserService {
 
       user.role = role;
 
+      Logger.log("User to be saved:", JSON.stringify(user));
+
       await this.userRepository.save(user);
-      Logger.log("User registration successfully");
+
+      Logger.log("User registration successfully:", JSON.stringify(user));
       return { statusCode: HttpStatus.OK, message: "successful" };
     } catch (error) {
-      Logger.error("Error registration user: ", error);
+      Logger.error("Error registration user: ", error.message, error.stack);
       throw new HttpException(
         "Error registration",
-        HttpStatus.INTERNAL_SERVER_ERROR
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }

@@ -31,6 +31,6 @@ export class User {
   @Column({ type: "jsonb", nullable: true })
   favoriteQuestions: Question[];
 
-  @ManyToOne(() => Role, (role) => role.users)
+  @ManyToOne(() => Role, (role) => role.users, { eager: true })
   role: Role;
 }

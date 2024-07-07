@@ -16,11 +16,11 @@ import { RolesLevel_access } from "src/helpers/roles-access";
 export class RolesGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
-    private reflector: Reflector
+    private reflector: Reflector,
   ) {}
 
   canActivate(
-    context: ExecutionContext
+    context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     try {
       const requiredRole = this.reflector.getAllAndOverride<string>(ROLES_KEY, [
@@ -37,7 +37,7 @@ export class RolesGuard implements CanActivate {
       if (!authHeader) {
         throw new HttpException(
           "Пользыватель не авторизован",
-          HttpStatus.UNAUTHORIZED
+          HttpStatus.UNAUTHORIZED,
         );
       }
 
@@ -47,22 +47,23 @@ export class RolesGuard implements CanActivate {
       if (bearer !== "Bearer" || !token) {
         throw new HttpException(
           "Пользыватель не авторизован",
-          HttpStatus.UNAUTHORIZED
+          HttpStatus.UNAUTHORIZED,
         );
       }
 
       let user;
       try {
-        user = this.jwtService.verify(token);
+        user = this.jwtService.verify(token, {
+          secret: process.env.PRIVATE_KEY || "SECRET",
+        });
       } catch (error) {
         throw new HttpException(
-          "Пользыватель не авторизован",
-          HttpStatus.UNAUTHORIZED
+          "Пользователь не авторизован",
+          HttpStatus.UNAUTHORIZED,
         );
       }
 
       req.user = user;
-
       if (RolesLevel_access[requiredRole] <= user.role.level_access) {
         return true;
       } else {
@@ -75,7 +76,6 @@ export class RolesGuard implements CanActivate {
       ) {
         throw error;
       }
-      throw new HttpException("Нет доступа", HttpStatus.FORBIDDEN);
     }
   }
 }

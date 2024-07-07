@@ -9,7 +9,7 @@ import { RegDto } from "./dto/reg.dto";
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
   ) {}
 
   async login(dto: LoginDto) {
@@ -27,20 +27,24 @@ export class AuthService {
   }
 
   private async generateToken(user: User) {
-    const payload = { email: user.email, id: user.id };
+    const payload = { email: user.email, id: user.id, role: user.role };
     return {
       token: this.jwtService.sign(payload),
     };
   }
 
-  private async validateUser(dto: LoginDto) {
+  async validateUser(dto: LoginDto) {
     const user = await this.userService.findOneByEmail(dto.email);
-    console.log(user);
-    const passwordEquals = await bcrypt.compare(dto.password, user.password);
-    if (user && passwordEquals) {
-      return user;
+
+    if (!user) {
+      throw new UnauthorizedException({ message: "User not found" });
     }
-    Logger.log("Wrong email or password");
-    throw new UnauthorizedException({ message: "Wrong email or password" });
+
+    const passwordEquals = await bcrypt.compare(dto.password, user.password);
+    if (!passwordEquals) {
+      throw new UnauthorizedException({ message: "Wrong email or password" });
+    }
+
+    return user;
   }
 }

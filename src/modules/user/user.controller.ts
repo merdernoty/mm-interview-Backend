@@ -27,8 +27,8 @@ export class UserController {
 
   @ApiOperation({ summary: "Получить пользователя по Email" })
   @ApiResponse({ status: 200, type: [User] })
-  @Roles('ADMIN')
-  @ApiBearerAuth('JWT-auth')
+  @Roles("ADMIN")
+  @ApiBearerAuth("JWT-auth")
   @UseGuards(RolesGuard)
   @Get("/email")
   getUserByEmail(@Body("email") email: string) {

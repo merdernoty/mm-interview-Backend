@@ -8,7 +8,6 @@ import {
   Put,
   UseGuards,
 } from "@nestjs/common";
-
 import { CreateRoleDto } from "./dto/create-role.dto";
 import {
   ApiBearerAuth,
@@ -40,7 +39,7 @@ export class RolesController {
   @Roles("ADMIN")
   @ApiBearerAuth("JWT-auth")
   @UseGuards(RolesGuard)
-  getBytitle(@Param("title") title: string) {
+  getByTitle(@Param("title") title: string) {
     return this.roleService.getRoleByTitle(title);
   }
 
