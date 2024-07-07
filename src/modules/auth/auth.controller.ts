@@ -40,9 +40,6 @@ export class AuthController {
     summary: "Проверка токена на валидность",
   })
   @ApiResponse({ status: 200 })
-  @Roles("ADMIN")
-  @ApiBearerAuth("JWT-auth")
-  @UseGuards(RolesGuard)
   @Get("/validate")
   async validateToken() {
     return this.authService.validateToken();

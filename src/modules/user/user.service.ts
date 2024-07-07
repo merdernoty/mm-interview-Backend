@@ -11,7 +11,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly rolesService: RolesService,
+    private readonly rolesService: RolesService
   ) {}
 
   async findOneByEmail(email: string): Promise<User> {
@@ -22,9 +22,7 @@ export class UserService {
     return this.userRepository.find();
   }
 
-  async create(
-    dto: RegDto,
-  ): Promise<{ statusCode: HttpStatus; message: string }> {
+  async create(dto: RegDto) {
     try {
       const hashPassword = await bcrypt.hash(dto.password, 10);
       const user = this.userRepository.create({
@@ -45,12 +43,12 @@ export class UserService {
       await this.userRepository.save(user);
 
       Logger.log("User registration successfully:", JSON.stringify(user));
-      return { statusCode: HttpStatus.OK, message: "successful" };
+      return user;
     } catch (error) {
       Logger.error("Error registration user: ", error.message, error.stack);
       throw new HttpException(
         "Error registration",
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
