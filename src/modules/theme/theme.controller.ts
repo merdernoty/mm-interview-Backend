@@ -29,7 +29,7 @@ export class ThemeController {
     return await this.themeService.findAll();
   }
 
-  @Get(":id")
+  @Get("byId/:id")
   async findOneById(
     @Param("id") id: number,
   ): Promise<Theme | { status: HttpStatus; message: string }> {
