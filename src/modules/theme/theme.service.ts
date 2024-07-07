@@ -7,11 +7,11 @@ import { Logger } from "@nestjs/common";
 
 @Injectable()
 export class ThemeService {
-  private readonly logger = new Logger(ThemeService.name);
   constructor(
     @InjectRepository(Theme)
     private readonly themeRepository: Repository<Theme>,
   ) {}
+  private readonly logger = new Logger(ThemeService.name);
 
   async create(
     dto: CreateThemeInput,
@@ -32,7 +32,7 @@ export class ThemeService {
 
       return {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: errorMessage,
+        message: "error",
       };
     }
   }
@@ -50,7 +50,7 @@ export class ThemeService {
         this.logger.warn(`Theme with id ${id} not found`);
         return {
           status: HttpStatus.NOT_FOUND,
-          message: "Theme not found",
+          message: "error",
         };
       }
 
@@ -63,7 +63,7 @@ export class ThemeService {
 
       return {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: "Internal server error",
+        message: "error",
       };
     }
   }
@@ -72,13 +72,16 @@ export class ThemeService {
     title: string,
   ): Promise<Theme | { status: HttpStatus; message: string }> {
     try {
-      const theme = await this.themeRepository.findOne({ where: { title } });
+      const theme = await this.themeRepository.findOne({
+        where: { title },
+        relations: ["subthemes", "subthemes.questions"],
+      });
 
       if (!theme) {
         this.logger.warn(`Theme with title '${title}' not found`);
         return {
           status: HttpStatus.NOT_FOUND,
-          message: "Theme not found",
+          message: "error",
         };
       }
 
@@ -91,7 +94,7 @@ export class ThemeService {
 
       return {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: "Internal server error",
+        message: "error",
       };
     }
   }
@@ -106,7 +109,7 @@ export class ThemeService {
         this.logger.warn(`No themes found`);
         return {
           status: HttpStatus.NOT_FOUND,
-          message: "No themes found",
+          message: "error",
         };
       }
 
@@ -119,7 +122,7 @@ export class ThemeService {
 
       return {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: "Internal server error",
+        message: "error",
       };
     }
   }
@@ -135,7 +138,7 @@ export class ThemeService {
         this.logger.warn(`Theme with id ${id} not found`);
         return {
           status: HttpStatus.NOT_FOUND,
-          message: "Theme not found",
+          message: "error",
         };
       }
 
@@ -151,7 +154,7 @@ export class ThemeService {
 
       return {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: "Internal server error",
+        message: "error",
       };
     }
   }
@@ -168,7 +171,7 @@ export class ThemeService {
         this.logger.warn(`Theme with id ${id} not found`);
         return {
           statusCode: HttpStatus.NOT_FOUND,
-          message: "Theme not found",
+          message: "error",
         };
       }
 
@@ -178,7 +181,7 @@ export class ThemeService {
 
       return {
         statusCode: HttpStatus.OK,
-        message: "Successfully deleted",
+        message: "successful",
       };
     } catch (error) {
       const errorMessage = `Failed to delete theme with id ${id}: ${error.message}`;
@@ -186,7 +189,7 @@ export class ThemeService {
 
       return {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: "Internal server error",
+        message: "error",
       };
     }
   }
