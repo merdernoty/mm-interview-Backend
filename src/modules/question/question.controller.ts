@@ -40,15 +40,7 @@ export class QuestionController {
     type: [Question],
   })
   async findAll(): Promise<{ status: number; message: string } | Question[]> {
-    const questions = await this.questionService.findAll();
-    if (Array.isArray(questions)) {
-      return questions;
-    } else {
-      return {
-        status: questions.status,
-        message: questions.message,
-      };
-    }
+    return await this.questionService.findAll();
   }
 
   @Get(":id")
@@ -62,11 +54,7 @@ export class QuestionController {
   async findOne(
     @Param("id") id: number,
   ): Promise<Question | { status: number; message: string }> {
-    const question = await this.questionService.findOne(id);
-    if (!question) {
-      throw new NotFoundException(`Question with ID ${id} not found`);
-    }
-    return question;
+    return await this.questionService.findOne(id);
   }
 
   @Delete(":id")
