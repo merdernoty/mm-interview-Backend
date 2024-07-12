@@ -51,10 +51,10 @@ export class QuestionController {
     type: Question,
   })
   @ApiResponse({ status: 404, description: "Question not found." })
-  async findOne(
+  async findOneByid(
     @Param("id") id: number,
   ): Promise<Question | { status: number; message: string }> {
-    return await this.questionService.findOne(id);
+    return await this.questionService.findOneById(id);
   }
 
   @Delete(":id")
@@ -68,5 +68,12 @@ export class QuestionController {
     @Param("id") id: number,
   ): Promise<{ statusCode: number; message: string }> {
     return this.questionService.remove(id);
+  }
+  @Post("/addToFav")
+  async addQuestionToFav(
+    @Body("userId") userId: number,
+    @Body("questionId") questionId: number,
+  ) {
+    return await this.questionService.addQuestionToFavorite(userId, questionId);
   }
 }

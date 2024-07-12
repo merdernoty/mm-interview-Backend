@@ -5,10 +5,12 @@ import { QuestionController } from "./question.controller";
 import { Question } from "./model/question.model";
 import { Subtheme } from "../subtheme/model/subtheme.model";
 import { SubthemeModule } from "../subtheme/subtheme.module";
+import { User } from "../user/model/user.model";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Question, Subtheme]),
+    TypeOrmModule.forFeature([Question, Subtheme, User]),
+
     forwardRef(() => SubthemeModule),
   ],
   providers: [QuestionService],

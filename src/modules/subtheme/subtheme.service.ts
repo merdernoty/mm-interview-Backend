@@ -11,6 +11,7 @@ export class SubthemeService {
   constructor(
     @InjectRepository(Subtheme)
     private readonly subthemeRepository: Repository<Subtheme>,
+
     @InjectRepository(Theme)
     private readonly themeRepository: Repository<Theme>,
   ) {}

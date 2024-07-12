@@ -1,10 +1,11 @@
-import { HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Question } from "./model/question.model";
 import { CreateQuestionInput } from "./dto/create-question.input";
 import { Subtheme } from "../subtheme/model/subtheme.model";
-import { Logger } from "@nestjs/common";
+import { User } from "../user/model/user.model";
+import { UserService } from "../user/user.service";
 
 @Injectable()
 export class QuestionService {
@@ -13,6 +14,10 @@ export class QuestionService {
     private readonly questionRepository: Repository<Question>,
     @InjectRepository(Subtheme)
     private readonly subthemeRepository: Repository<Subtheme>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+
+    // private readonly userService: UserService,
   ) {}
 
   private readonly logger = new Logger(QuestionService.name);
@@ -73,7 +78,7 @@ export class QuestionService {
     }
   }
 
-  async findOne(
+  async findOneById(
     id: number,
   ): Promise<Question | { status: number; message: string }> {
     try {
@@ -170,6 +175,61 @@ export class QuestionService {
 
       return {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: "error",
+      };
+    }
+  }
+
+  async addQuestionToFavorite(
+    userId: number,
+    QuestionId: number,
+  ): Promise<{ status: number; message: string }> {
+    try {
+      const user = await this.userRepository.findOneById(userId);
+      if (!user) {
+        return {
+          status: HttpStatus.NOT_FOUND,
+          message: "error",
+        };
+      }
+
+      const question = await this.findOneById(QuestionId);
+      if (!question) {
+        return {
+          status: HttpStatus.NOT_FOUND,
+          message: "error",
+        };
+      }
+
+      // Проверяем, что question действительно является объектом типа Question
+      if (!(question instanceof Question)) {
+        throw new HttpException(
+          "Invalid question object",
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      // Добавляем новый вопрос в массив избранных вопросов пользователя
+      if (!user.favoriteQuestions) {
+        user.favoriteQuestions = [];
+      }
+      user.favoriteQuestions.push(question);
+
+      // Сохраняем пользователя с обновленным массивом избранных вопросов
+      await this.userRepository.save(user);
+
+      return {
+        status: HttpStatus.OK,
+        message: "successfully",
+      };
+    } catch (error) {
+      Logger.error(
+        "Error adding question to favorites: ",
+        error.message,
+        error.stack,
+      );
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
         message: "error",
       };
     }
