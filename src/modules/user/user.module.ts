@@ -6,12 +6,14 @@ import { User } from "./model/user.model";
 import { Role } from "../roles/model/roles.model";
 import { RolesModule } from "../roles/roles.module";
 import { JwtModule } from "@nestjs/jwt";
+import { UploadModule } from "../upload/upload.module";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Role]),
     forwardRef(() => RolesModule),
     JwtModule,
+    UploadModule,
   ],
   controllers: [UserController],
   providers: [UserService],
