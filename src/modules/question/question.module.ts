@@ -3,12 +3,15 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { QuestionService } from "./question.service";
 import { QuestionController } from "./question.controller";
 import { Question } from "./model/question.model";
-import { ThemeModule } from "../theme/theme.module";
+import { Subtheme } from "../subtheme/model/subtheme.model";
+import { SubthemeModule } from "../subtheme/subtheme.module";
+import { User } from "../user/model/user.model";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Question]),
-    forwardRef(() => ThemeModule),
+    TypeOrmModule.forFeature([Question, Subtheme, User]),
+
+    forwardRef(() => SubthemeModule),
   ],
   providers: [QuestionService],
   controllers: [QuestionController],

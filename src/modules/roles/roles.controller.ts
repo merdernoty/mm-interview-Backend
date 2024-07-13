@@ -27,9 +27,9 @@ export class RolesController {
 
   @ApiOperation({ summary: "Создание роли" })
   @ApiResponse({ status: 200, type: Role })
-  @Roles("ADMIN")
-  @ApiBearerAuth("JWT-auth")
-  @UseGuards(RolesGuard)
+  // @Roles("ADMIN")
+  // @ApiBearerAuth("JWT-auth")
+  // @UseGuards(RolesGuard)
   @Post()
   create(@Body() dto: CreateRoleDto) {
     return this.roleService.createRole(dto);

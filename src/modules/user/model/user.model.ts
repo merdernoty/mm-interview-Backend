@@ -4,10 +4,14 @@ import {
   PrimaryGeneratedColumn,
   Index,
   ManyToOne,
-} from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger';
-import { Question } from '../../question/model/question.model';
-import { Role } from 'src/modules/roles/model/roles.model';
+
+} from "typeorm";
+import { ApiProperty } from "@nestjs/swagger";
+import { Question } from "../../question/model/question.model";
+import { Role } from "src/modules/roles/model/roles.model";
+import { UserInfo } from "../interface/userInfo";
+
+
 
 @Entity()
 export class User {
@@ -31,9 +35,10 @@ export class User {
   @Column()
   password: string;
 
-  @ApiProperty({ description: 'Favorite questions', type: [String] })
-  @Column({ type: 'jsonb', nullable: true })
-  favoriteQuestions: Question[];
+
+  @ApiProperty({ description: "User info" })
+  @Column({ type: "jsonb", nullable: true })
+  info: UserInfo | null;
 
   @ManyToOne(() => Role, (role) => role.users, { eager: true })
   role: Role;

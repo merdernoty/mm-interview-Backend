@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { Theme } from "../../theme/model/theme.model";
+import { Subtheme } from "../../subtheme/model/subtheme.model";
 
 @Entity()
 export class Question {
@@ -15,6 +16,6 @@ export class Question {
   @ApiProperty({ description: "List of answers" })
   answers: string[];
 
-  @ManyToOne(() => Theme, (theme) => theme.questions)
-  theme: Theme;
+  @ManyToOne(() => Subtheme, (subtheme) => subtheme.questions)
+  subtheme: Subtheme;
 }

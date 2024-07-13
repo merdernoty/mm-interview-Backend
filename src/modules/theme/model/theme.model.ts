@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
-import { Question } from "../../question/model/question.model";
+import { Subtheme } from "../../subtheme/model/subtheme.model";
+import { Award } from "../interface/Award";
 
 @Entity()
 export class Theme {
@@ -15,7 +16,27 @@ export class Theme {
   @ApiProperty({ description: "Description" })
   description: string;
 
-  @OneToMany(() => Question, (question) => question.theme)
-  @ApiProperty({ description: "List of questions" })
-  questions: Question[];
+  @Column({ nullable: false, default: "default-image-url.jpg" })
+  @ApiProperty({ description: "image" })
+  image: string;
+
+  @Column("jsonb", {
+    nullable: true,
+    default: {
+      id: 0,
+      title: "themeAward",
+      image: "jpg",
+      description: "u are cool",
+    },
+  })
+  @ApiProperty({ description: "Award" })
+  award: Award;
+
+  @Column("jsonb", { nullable: true, default: [] })
+  @ApiProperty({ description: "Related themes" })
+  relatedThemes: RelatedTheme[];
+
+  @OneToMany(() => Subtheme, (subtheme) => subtheme.theme)
+  @ApiProperty({ description: "List of subthemes" })
+  subthemes: Subtheme[];
 }

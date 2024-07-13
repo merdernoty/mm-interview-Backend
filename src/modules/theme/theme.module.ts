@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { ThemeService } from "./theme.service";
 import { ThemeController } from "./theme.controller";
+import { ThemeService } from "./theme.service";
 import { Theme } from "./model/theme.model";
 
 @Module({

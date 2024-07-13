@@ -8,6 +8,9 @@ import { RolesService } from "../roles/roles.service";
 import { ChangeUserDataDto } from "./dto/change-userdata";
 import { UploadService } from "../upload/upload.service";
 
+import { QuestionService } from "../question/question.service";
+import { Question } from "../question/model/question.model";
+
 @Injectable()
 export class UserService {
   constructor(
@@ -17,11 +20,17 @@ export class UserService {
     private readonly uploadRepository: UploadService
   ) {}
 
-  async findOneByEmail(email: string): Promise<User> {
+  //private readonly logger = new Logger(UserService.name); Todo
+
+  async findOneByEmail(email: string): Promise<User | undefined> {
     return this.userRepository.findOne({ where: { email } });
   }
   async findById(userId: number): Promise<User> {
     return this.userRepository.findOne({ where: { id: userId } });
+  }
+
+  async findOneById(id: number): Promise<User | undefined> {
+    return this.userRepository.findOne({ where: { id } });
   }
 
   async findAll(): Promise<User[]> {
@@ -84,9 +93,15 @@ export class UserService {
         password: hashPassword,
         username: dto.username,
         email: dto.email,
+        info: {
+          favoriteQuestions: [],
+          completedQuestions: [],
+          rewards: [],
+        },
       });
 
       const role = await this.rolesService.getRoleByTitle("USER");
+
       if (!role) {
         throw new HttpException("Role not found", HttpStatus.NOT_FOUND);
       }
