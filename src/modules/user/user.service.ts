@@ -40,7 +40,11 @@ export class UserService {
         password: hashPassword,
         username: dto.username,
         email: dto.email,
-        favoriteQuestions: [],
+        info: {
+          favoriteQuestions: [],
+          completedQuestions: [],
+          rewards: [],
+        },
       });
 
       const role = await this.rolesService.getRoleByTitle("USER");

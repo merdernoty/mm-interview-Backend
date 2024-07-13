@@ -15,10 +15,4 @@ export class CreateThemeInput {
   @IsNotEmpty()
   @IsString()
   description: string;
-
-  @Field()
-  @ApiProperty({ description: "Award name" })
-  @IsNotEmpty()
-  @IsString()
-  award: string;
 }

@@ -7,11 +7,11 @@ import {
   Delete,
   Put,
   HttpStatus,
-  NotFoundException,
 } from "@nestjs/common";
 import { ThemeService } from "./theme.service";
 import { CreateThemeInput } from "./dto/create-theme.input";
 import { Theme } from "./model/theme.model";
+import { Award } from "./interface/Award";
 
 @Controller("themes")
 export class ThemeController {
@@ -49,6 +49,28 @@ export class ThemeController {
     @Body() updatedTheme: Partial<Theme>,
   ): Promise<Theme | { status: HttpStatus; message: string }> {
     return await this.themeService.update(id, updatedTheme);
+  }
+  @Post(":themeId/award")
+  async addAwardToTheme(
+    @Param("themeId") themeId: number,
+    @Body() award: Award,
+  ): Promise<{ statusCode: HttpStatus; message: string }> {
+    return this.themeService.addAwardToTheme(themeId, award);
+  }
+
+  @Post(":themeId/related")
+  async addRelatedToTheme(
+    @Param("themeId") themeId: number,
+    @Body() relatedThemeIds: number[],
+  ): Promise<{ statusCode: HttpStatus; message: string }> {
+    return this.themeService.addRelatedToTheme(themeId, relatedThemeIds);
+  }
+  @Post(":themeId/related/:relatedThemeId")
+  async addOneRelatedToTheme(
+    @Param("themeId") themeId: number,
+    @Param("relatedThemeId") relatedThemeId: number,
+  ): Promise<{ statusCode: HttpStatus; message: string }> {
+    return this.themeService.addOneRelatedToTheme(themeId, relatedThemeId);
   }
 
   @Delete(":id")

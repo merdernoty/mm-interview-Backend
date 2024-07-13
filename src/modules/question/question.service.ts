@@ -182,7 +182,7 @@ export class QuestionService {
 
   async addQuestionToFavorite(
     userId: number,
-    QuestionId: number,
+    questionId: number,
   ): Promise<{ status: number; message: string }> {
     try {
       const user = await this.userRepository.findOneById(userId);
@@ -193,7 +193,7 @@ export class QuestionService {
         };
       }
 
-      const question = await this.findOneById(QuestionId);
+      const question = await this.questionRepository.findOneById(questionId);
       if (!question) {
         return {
           status: HttpStatus.NOT_FOUND,
@@ -201,7 +201,6 @@ export class QuestionService {
         };
       }
 
-      // Проверяем, что question действительно является объектом типа Question
       if (!(question instanceof Question)) {
         throw new HttpException(
           "Invalid question object",
@@ -209,13 +208,8 @@ export class QuestionService {
         );
       }
 
-      // Добавляем новый вопрос в массив избранных вопросов пользователя
-      if (!user.favoriteQuestions) {
-        user.favoriteQuestions = [];
-      }
-      user.favoriteQuestions.push(question);
+      user.info.favoriteQuestions.push(question);
 
-      // Сохраняем пользователя с обновленным массивом избранных вопросов
       await this.userRepository.save(user);
 
       return {

@@ -4,6 +4,8 @@ import { Repository } from "typeorm";
 import { Theme } from "./model/theme.model";
 import { CreateThemeInput } from "./dto/create-theme.input";
 import { Logger } from "@nestjs/common";
+import { Award } from "./interface/Award";
+// import { RelatedTheme } from "./interface/RelatedTheme"
 
 @Injectable()
 export class ThemeService {
@@ -155,6 +157,176 @@ export class ThemeService {
       return {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
         message: "error",
+      };
+    }
+  }
+  async addAwardToTheme(
+    themeId: number,
+    award: Award,
+  ): Promise<{ statusCode: HttpStatus; message: string }> {
+    try {
+      const theme: Theme = await this.themeRepository.findOne({
+        where: { id: themeId },
+      });
+
+      if (!theme) {
+        this.logger.warn(`Theme with id ${themeId} not found`);
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: "error",
+        };
+      }
+
+      theme.award = award;
+
+      await this.themeRepository.save(theme);
+
+      this.logger.log(`Award successfully added to theme with id ${themeId}`);
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: "successful",
+      };
+    } catch (error) {
+      this.logger.error(
+        `Error adding award to theme with id ${themeId}`,
+        error,
+      );
+
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: "error",
+      };
+    }
+  }
+
+  async addRelatedToTheme(
+    themeId: number,
+    relatedThemeIds: number[],
+  ): Promise<{ statusCode: HttpStatus; message: string }> {
+    try {
+      const theme: Theme = await this.themeRepository.findOne({
+        where: { id: themeId },
+      });
+
+      if (!theme) {
+        this.logger.warn(`Theme with id ${themeId} not found`);
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: "Theme not found",
+        };
+      }
+
+      const relatedThemesToAdd: RelatedTheme[] = [];
+
+      for (const relatedThemeId of relatedThemeIds) {
+        this.logger.log(`Finding related theme with id ${relatedThemeId}`);
+
+        const foundTheme: Theme = await this.themeRepository.findOne({
+          where: { id: relatedThemeId },
+        });
+
+        if (!foundTheme) {
+          this.logger.warn(`Related theme with id ${relatedThemeId} not found`);
+          continue; // Пропускаем несуществующие темы
+        }
+
+        relatedThemesToAdd.push({
+          id: foundTheme.id,
+          title: foundTheme.title,
+        });
+      }
+
+      if (relatedThemesToAdd.length === 0) {
+        this.logger.warn(`No valid related themes found`);
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: "No valid related themes found",
+        };
+      }
+
+      theme.relatedThemes = [...theme.relatedThemes, ...relatedThemesToAdd];
+
+      await this.themeRepository.save(theme);
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: "Related themes added successfully",
+      };
+    } catch (error) {
+      this.logger.error(
+        `Error adding related themes to theme with id ${themeId}`,
+        error.stack,
+      );
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: "Internal server error",
+      };
+    }
+  }
+
+  async addOneRelatedToTheme(
+    themeId: number,
+    relatedThemeId: number,
+  ): Promise<{ statusCode: HttpStatus; message: string }> {
+    try {
+      const theme: Theme = await this.themeRepository.findOne({
+        where: { id: themeId },
+        //relations: ["relatedThemes"],
+      });
+
+      if (!theme) {
+        this.logger.warn(`Theme with id ${themeId} not found`);
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: "Theme not found",
+        };
+      }
+
+      const foundTheme: Theme = await this.themeRepository.findOne({
+        where: { id: relatedThemeId },
+      });
+
+      if (!foundTheme) {
+        this.logger.warn(`Related theme with id ${relatedThemeId} not found`);
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: "Related theme not found",
+        };
+      }
+
+      const isRelated = theme.relatedThemes.some(
+        (related) => related.id === foundTheme.id,
+      );
+
+      if (isRelated) {
+        this.logger.warn(
+          `Related theme with id ${relatedThemeId} already exists in theme with id ${themeId}`,
+        );
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: "Related theme already exists",
+        };
+      }
+
+      // Добавляем связанную тему к основной теме
+      theme.relatedThemes.push(foundTheme);
+
+      // Сохраняем изменения в базе данных
+      await this.themeRepository.save(theme);
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: "Related theme added successfully",
+      };
+    } catch (error) {
+      this.logger.error(
+        `Error adding related theme to theme with id ${themeId}`,
+        error.stack,
+      );
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: "Internal server error",
       };
     }
   }
