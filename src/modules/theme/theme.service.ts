@@ -272,7 +272,6 @@ export class ThemeService {
     try {
       const theme: Theme = await this.themeRepository.findOne({
         where: { id: themeId },
-        //relations: ["relatedThemes"],
       });
 
       if (!theme) {
