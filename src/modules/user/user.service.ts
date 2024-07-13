@@ -5,21 +5,76 @@ import { User } from "./model/User.model";
 import * as bcrypt from "bcryptjs";
 import { RegDto } from "../auth/dto/reg.dto";
 import { RolesService } from "../roles/roles.service";
+import { ChangeUserDataDto } from "./dto/change-userdata";
+import { UploadService } from "../upload/upload.service";
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly rolesService: RolesService
+    private readonly rolesService: RolesService,
+    private readonly uploadRepository: UploadService
   ) {}
 
   async findOneByEmail(email: string): Promise<User> {
     return this.userRepository.findOne({ where: { email } });
   }
+  async findById(userId: number): Promise<User> {
+    return this.userRepository.findOne({ where: { id: userId } });
+  }
 
   async findAll(): Promise<User[]> {
     return this.userRepository.find();
+  }
+
+  async getUserById(id: number): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { id: id },
+      select: ["id", "email", "username", "favoriteQuestions","image"]
+    });
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    Logger.log("User with id: " + user.id + " got");
+  
+    return user;
+  }
+  
+  async changeMyselfDate(
+    dto: ChangeUserDataDto,
+    userId: number,
+    imageUrl?: any
+  ): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      select: ["id", "email", "username", "favoriteQuestions","image"]
+    });
+    if (!user) {
+      throw new HttpException("User not found", HttpStatus.NOT_FOUND);
+    }
+
+    const updatedFields = { ...dto };
+    if (imageUrl) {
+      const uploadedImageUrl = await this.uploadRepository.uploadFile(imageUrl);
+      updatedFields["image"] = uploadedImageUrl;
+    }
+
+    try {
+      await this.userRepository.update(userId, updatedFields);
+
+      const updatedUser = await this.userRepository.findOne({
+        where: { id: userId },
+        select: ["id", "email", "username", "favoriteQuestions", "image"]
+      });
+  
+      return updatedUser;
+    } catch (error) {
+      throw new HttpException(
+        "Failed to update user",
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   async create(dto: RegDto) {

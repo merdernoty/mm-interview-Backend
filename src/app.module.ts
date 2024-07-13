@@ -6,9 +6,11 @@ import { DatabaseModule } from "./database/database.module";
 import { Module } from "@nestjs/common";
 import { QuestionModule } from "./modules/question/question.module";
 import { ThemeModule } from "./modules/theme/theme.module";
+import { UploadModule } from "./modules/upload/upload.module";
 
 @Module({
   imports: [
+    UploadModule,
     RolesModule,
     AuthModule,
     OpenaiModule,
