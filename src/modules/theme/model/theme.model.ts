@@ -1,10 +1,4 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  OneToMany,
-  ManyToMany,
-} from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { Subtheme } from "../../subtheme/model/subtheme.model";
 import { Award } from "../interface/Award";
@@ -22,6 +16,10 @@ export class Theme {
   @ApiProperty({ description: "Description" })
   description: string;
 
+  @Column({ nullable: false, default: "default-image-url.jpg" })
+  @ApiProperty({ description: "image" })
+  image: string;
+
   @Column("jsonb", {
     nullable: true,
     default: {
@@ -29,7 +27,7 @@ export class Theme {
       title: "themeAward",
       image: "jpg",
       description: "u are cool",
-    }, // Дефолтное значение для award
+    },
   })
   @ApiProperty({ description: "Award" })
   award: Award;

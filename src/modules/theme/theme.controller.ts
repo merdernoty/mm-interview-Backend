@@ -7,6 +7,7 @@ import {
   Delete,
   Put,
   HttpStatus,
+  Query,
 } from "@nestjs/common";
 import { ThemeService } from "./theme.service";
 import { CreateThemeInput } from "./dto/create-theme.input";
@@ -25,8 +26,10 @@ export class ThemeController {
   }
 
   @Get()
-  async findAll(): Promise<Theme[] | { status: HttpStatus; message: string }> {
-    return await this.themeService.findAll();
+  async findAll(
+    @Query("depth") depth: number,
+  ): Promise<Theme[] | { status: HttpStatus; message: string }> {
+    return await this.themeService.findAll(depth);
   }
 
   @Get("byId/:id")
@@ -58,19 +61,12 @@ export class ThemeController {
     return this.themeService.addAwardToTheme(themeId, award);
   }
 
-  @Post(":themeId/related")
-  async addRelatedToTheme(
+  @Put("/:themeId/related")
+  async addRelatedToThemes(
     @Param("themeId") themeId: number,
-    @Body() relatedThemeIds: number[],
+    @Body("relatedThemesIds") relatedThemesIds: number[],
   ): Promise<{ statusCode: HttpStatus; message: string }> {
-    return this.themeService.addRelatedToTheme(themeId, relatedThemeIds);
-  }
-  @Post(":themeId/related/:relatedThemeId")
-  async addOneRelatedToTheme(
-    @Param("themeId") themeId: number,
-    @Param("relatedThemeId") relatedThemeId: number,
-  ): Promise<{ statusCode: HttpStatus; message: string }> {
-    return this.themeService.addOneRelatedToTheme(themeId, relatedThemeId);
+    return this.themeService.addRelatedToThemes(themeId, relatedThemesIds);
   }
 
   @Delete(":id")

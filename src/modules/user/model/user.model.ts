@@ -29,8 +29,8 @@ export class User {
   password: string;
 
   @ApiProperty({ description: "User info" })
-  @Column({ type: "jsonb" })
-  info: UserInfo;
+  @Column({ type: "jsonb", nullable: true })
+  info: UserInfo | null;
 
   @ManyToOne(() => Role, (role) => role.users, { eager: true })
   role: Role;

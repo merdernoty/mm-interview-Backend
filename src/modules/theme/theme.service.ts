@@ -20,6 +20,20 @@ export class ThemeService {
   ): Promise<{ status: number; message: string }> {
     try {
       const theme: Theme = this.themeRepository.create(dto);
+
+      if (dto.RelatedThemesIds && dto.RelatedThemesIds.length > 0) {
+        const relatedThemesEntities = await this.themeRepository.findByIds(
+          dto.RelatedThemesIds,
+        );
+        const relatedThemes: RelatedTheme[] = relatedThemesEntities.map(
+          (entity) => ({
+            id: entity.id,
+            title: entity.title,
+          }),
+        );
+        theme.relatedThemes = relatedThemes;
+      }
+
       await this.themeRepository.save(theme);
 
       this.logger.log(`Created theme with title: ${dto.title}`);
@@ -101,10 +115,13 @@ export class ThemeService {
     }
   }
 
-  async findAll(): Promise<Theme[] | { status: HttpStatus; message: string }> {
+  async findAll(
+    depth?: number,
+  ): Promise<Theme[] | { status: HttpStatus; message: string }> {
     try {
+      const relations = depth && depth > 1 ? ["subthemes"] : [];
       const themes = await this.themeRepository.find({
-        relations: ["subthemes"],
+        relations: relations,
       });
 
       if (!themes || themes.length === 0) {
@@ -200,9 +217,9 @@ export class ThemeService {
     }
   }
 
-  async addRelatedToTheme(
+  async addRelatedToThemes(
     themeId: number,
-    relatedThemeIds: number[],
+    relatedThemesIds: number[],
   ): Promise<{ statusCode: HttpStatus; message: string }> {
     try {
       const theme: Theme = await this.themeRepository.findOne({
@@ -217,110 +234,43 @@ export class ThemeService {
         };
       }
 
-      const relatedThemesToAdd: RelatedTheme[] = [];
-
-      for (const relatedThemeId of relatedThemeIds) {
-        this.logger.log(`Finding related theme with id ${relatedThemeId}`);
-
-        const foundTheme: Theme = await this.themeRepository.findOne({
-          where: { id: relatedThemeId },
-        });
-
-        if (!foundTheme) {
-          this.logger.warn(`Related theme with id ${relatedThemeId} not found`);
-          continue; // Пропускаем несуществующие темы
-        }
-
-        relatedThemesToAdd.push({
-          id: foundTheme.id,
-          title: foundTheme.title,
-        });
-      }
-
-      if (relatedThemesToAdd.length === 0) {
-        this.logger.warn(`No valid related themes found`);
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: "No valid related themes found",
-        };
-      }
-
-      theme.relatedThemes = [...theme.relatedThemes, ...relatedThemesToAdd];
-
-      await this.themeRepository.save(theme);
-
-      return {
-        statusCode: HttpStatus.OK,
-        message: "Related themes added successfully",
-      };
-    } catch (error) {
-      this.logger.error(
-        `Error adding related themes to theme with id ${themeId}`,
-        error.stack,
-      );
-      return {
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: "Internal server error",
-      };
-    }
-  }
-
-  async addOneRelatedToTheme(
-    themeId: number,
-    relatedThemeId: number,
-  ): Promise<{ statusCode: HttpStatus; message: string }> {
-    try {
-      const theme: Theme = await this.themeRepository.findOne({
-        where: { id: themeId },
-      });
-
-      if (!theme) {
-        this.logger.warn(`Theme with id ${themeId} not found`);
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: "Theme not found",
-        };
-      }
-
-      const foundTheme: Theme = await this.themeRepository.findOne({
-        where: { id: relatedThemeId },
-      });
-
-      if (!foundTheme) {
-        this.logger.warn(`Related theme with id ${relatedThemeId} not found`);
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: "Related theme not found",
-        };
-      }
-
-      const isRelated = theme.relatedThemes.some(
-        (related) => related.id === foundTheme.id,
-      );
-
-      if (isRelated) {
+      if (!Array.isArray(relatedThemesIds) || relatedThemesIds.length === 0) {
         this.logger.warn(
-          `Related theme with id ${relatedThemeId} already exists in theme with id ${themeId}`,
+          `No related themes ids provided or invalid format: ${relatedThemesIds.join(", ")}`,
         );
         return {
           statusCode: HttpStatus.BAD_REQUEST,
-          message: "Related theme already exists",
+          message: "No related themes ids provided or invalid format",
         };
       }
 
-      // Добавляем связанную тему к основной теме
-      theme.relatedThemes.push(foundTheme);
+      // Fetch all related themes
+      const relatedThemes =
+        await this.themeRepository.findByIds(relatedThemesIds);
+
+      if (relatedThemes.length !== relatedThemesIds.length) {
+        this.logger.warn(
+          `One or more related themes not found: ${relatedThemesIds.join(", ")}`,
+        );
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: "One or more related themes not found",
+        };
+      }
+
+      // Обновляем связанные темы основной темы
+      theme.relatedThemes = relatedThemes;
 
       // Сохраняем изменения в базе данных
       await this.themeRepository.save(theme);
 
       return {
         statusCode: HttpStatus.OK,
-        message: "Related theme added successfully",
+        message: "Related themes updated successfully",
       };
     } catch (error) {
       this.logger.error(
-        `Error adding related theme to theme with id ${themeId}`,
+        `Error updating related themes for theme with id ${themeId}`,
         error.stack,
       );
       return {
