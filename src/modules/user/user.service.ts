@@ -40,7 +40,7 @@ export class UserService {
   async getUserById(id: number): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: id },
-      select: ["id", "email", "username", "favoriteQuestions","image"]
+      select: ["id", "email", "username", "info","image"]
     });
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
@@ -57,7 +57,7 @@ export class UserService {
   ): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      select: ["id", "email", "username", "favoriteQuestions","image"]
+      select: ["id", "email", "username", "info","image"]
     });
     if (!user) {
       throw new HttpException("User not found", HttpStatus.NOT_FOUND);
@@ -74,7 +74,7 @@ export class UserService {
 
       const updatedUser = await this.userRepository.findOne({
         where: { id: userId },
-        select: ["id", "email", "username", "favoriteQuestions", "image"]
+        select: ["id", "email", "username", "info", "image"]
       });
   
       return updatedUser;
