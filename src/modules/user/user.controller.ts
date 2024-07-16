@@ -33,9 +33,9 @@ export class UserController {
 
   @ApiOperation({ summary: "Получить всех пользователей" })
   @ApiResponse({ status: 200, type: [User] })
-  //@Roles("ADMIN")
-  //@ApiBearerAuth("JWT-auth")
-  //@UseGuards(RolesGuard)
+  @Roles("ADMIN")
+  @ApiBearerAuth("JWT-auth")
+  @UseGuards(RolesGuard)
   @Get()
   getAll() {
     return this.userService.findAll();
@@ -80,9 +80,9 @@ export class UserController {
 
   @ApiOperation({ summary: "Получить пользователя по id" })
   @ApiResponse({ status: 200, type: [User] })
-  // @Roles("ADMIN")
-  // @ApiBearerAuth("JWT-auth")
-  // @UseGuards(RolesGuard)
+  @Roles("ADMIN")
+  @ApiBearerAuth("JWT-auth")
+  @UseGuards(RolesGuard)
   @Get("byId/:id")
   getUserById(@Param("id") id: number) {
     return this.userService.getUserById(id);
@@ -90,9 +90,9 @@ export class UserController {
 
   @ApiOperation({ summary: "Получить пользователя по id" })
   @ApiResponse({ status: 200, type: [User] })
-  //@Roles("USER")
-  //@ApiBearerAuth("JWT-auth")
-  //@UseGuards(RolesGuard)
+  @Roles("USER")
+  @ApiBearerAuth("JWT-auth")
+  @UseGuards(RolesGuard)
   @Get("byUsername/:username")
   getUserByUsername(@Param("username") username: string) {
     this.logger.log(`Запрос на получение пользователя с username $`);
