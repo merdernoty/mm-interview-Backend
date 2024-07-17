@@ -7,16 +7,21 @@ import {
   Param,
   NotFoundException,
   HttpStatus,
+  UseGuards,
+  Request,
+  Logger,
 } from "@nestjs/common";
 import { QuestionService } from "./question.service";
 import { CreateQuestionInput } from "./dto/create-question.input";
 import { Question } from "./model/question.model";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { JwtAuthGuard } from "../../guard/jwtAuth.guard";
 
 @ApiTags("questions")
 @Controller("questions")
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
+  private readonly logger = new Logger(QuestionController.name);
 
   @Post()
   @ApiOperation({ summary: "Create a new question" })
@@ -69,11 +74,13 @@ export class QuestionController {
   ): Promise<{ statusCode: number; message: string }> {
     return this.questionService.remove(id);
   }
-  @Post("/addToFav")
-  async addQuestionToFav(
-    @Body("userId") userId: number,
-    @Body("questionId") questionId: number,
-  ) {
-    return await this.questionService.addQuestionToFavorite(userId, questionId);
+
+  @UseGuards(JwtAuthGuard)
+  @Post("/addToFav/:questionId")
+  async addQuestionToFav(@Request() req, @Param("questionId") questionId) {
+    this.logger.log(`fav from question ${questionId}`);
+    const Userid = req.user.id;
+    this.logger.log(`fav from user${Userid}`);
+    return this.questionService.addQuestionToFavorite(Userid, questionId);
   }
 }

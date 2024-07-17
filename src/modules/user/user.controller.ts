@@ -43,12 +43,12 @@ export class UserController {
 
   @ApiOperation({ summary: "Получения пользователя по токену" })
   @ApiResponse({ status: 200 })
-  @ApiBearerAuth("JWT-auth")
+  //@ApiBearerAuth("JWT-auth")
   @UseGuards(JwtAuthGuard)
   @Post("/me")
   async getMe(@Request() req) {
     const id = req.user.id;
-
+    this.logger.log("id " + { id });
     return this.userService.getUserById(id);
   }
 
