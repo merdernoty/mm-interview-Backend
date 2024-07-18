@@ -30,25 +30,18 @@ export class SubthemeController {
     return await this.subthemeService.findAll();
   }
 
-  @Get(":id")
-  async findOne(
-    @Param("id") id: number,
-  ): Promise<Subtheme | { status: HttpStatus; message: string }> {
-    return await this.subthemeService.findOneById(id);
-  }
-
-  @Put(":id")
+  @Put(":subthemeTitle")
   async update(
-    @Param("id") id: number,
+    @Param("title") title: string,
     @Body() updatedSubtheme: Partial<Subtheme>,
   ): Promise<Subtheme | { status: HttpStatus; message: string }> {
-    return await this.subthemeService.update(id, updatedSubtheme);
+    return await this.subthemeService.update(title, updatedSubtheme);
   }
 
   @Delete(":id")
   async remove(
-    @Param("id") id: number,
+    @Param("title") title: string,
   ): Promise<{ statusCode: HttpStatus; message: string }> {
-    return await this.subthemeService.remove(id);
+    return await this.subthemeService.remove(title);
   }
 }

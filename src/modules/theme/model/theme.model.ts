@@ -1,17 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { Entity, Column, OneToMany, PrimaryColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { Subtheme } from "../../subtheme/model/subtheme.model";
 import { Award } from "../interface/Award";
 
 @Entity()
 export class Theme {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column({ nullable: false })
+  @PrimaryColumn()
   @ApiProperty({ description: "Title" })
   title: string;
-
   @Column({ nullable: false })
   @ApiProperty({ description: "Description" })
   description: string;

@@ -32,13 +32,6 @@ export class ThemeController {
     return await this.themeService.findAll(depth);
   }
 
-  @Get("byId/:id")
-  async findOneById(
-    @Param("id") id: number,
-  ): Promise<Theme | { status: HttpStatus; message: string }> {
-    return await this.themeService.findOneById(id);
-  }
-
   @Get(":title")
   async findOneByTitle(
     @Param("title") title: string,
@@ -48,31 +41,31 @@ export class ThemeController {
 
   @Put(":id")
   async update(
-    @Param("id") id: number,
+    @Param("title") title: string,
     @Body() updatedTheme: Partial<Theme>,
   ): Promise<Theme | { status: HttpStatus; message: string }> {
-    return await this.themeService.update(id, updatedTheme);
+    return await this.themeService.update(title, updatedTheme);
   }
   @Post(":themeId/award")
   async addAwardToTheme(
-    @Param("themeId") themeId: number,
+    @Param("title") title: string,
     @Body() award: Award,
   ): Promise<{ statusCode: HttpStatus; message: string }> {
-    return this.themeService.addAwardToTheme(themeId, award);
+    return this.themeService.addAwardToTheme(title, award);
   }
 
   @Put("/:themeId/related")
   async addRelatedToThemes(
-    @Param("themeId") themeId: number,
+    @Param("title") title: string,
     @Body("relatedThemesIds") relatedThemesIds: number[],
   ): Promise<{ statusCode: HttpStatus; message: string }> {
-    return this.themeService.addRelatedToThemes(themeId, relatedThemesIds);
+    return this.themeService.addRelatedToThemes(title, relatedThemesIds);
   }
 
   @Delete(":id")
   async remove(
-    @Param("id") id: number,
+    @Param("title") title: string,
   ): Promise<{ statusCode: HttpStatus; message: string }> {
-    return await this.themeService.remove(id);
+    return await this.themeService.remove(title);
   }
 }

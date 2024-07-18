@@ -17,37 +17,6 @@ export class SubthemeService {
   ) {}
   private readonly logger = new Logger(SubthemeService.name);
 
-  async findOneById(
-    id: number,
-  ): Promise<Subtheme | { status: HttpStatus; message: string }> {
-    try {
-      const subtheme = await this.subthemeRepository.findOne({
-        where: { id },
-        relations: ["questions"],
-      });
-
-      if (!subtheme) {
-        this.logger.warn(`Subtheme with id ${id} not found`);
-        return {
-          status: HttpStatus.NOT_FOUND,
-          message: "error",
-        };
-      }
-
-      this.logger.log(`Found subtheme with id ${id}`);
-
-      return subtheme;
-    } catch (error) {
-      const errorMessage = `Failed to find subtheme with id ${id}: ${error.message}`;
-      this.logger.error(errorMessage);
-
-      return {
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: "error",
-      };
-    }
-  }
-
   async findOneByTitle(
     title: string,
   ): Promise<Subtheme | { status: HttpStatus; message: string }> {
@@ -110,15 +79,15 @@ export class SubthemeService {
   async create(
     dto: CreateSubthemeInput,
   ): Promise<Subtheme | { status: HttpStatus; message: string }> {
-    const { themeId, ...dtoFields } = dto;
+    const { themeTitle, ...dtoFields } = dto;
 
     try {
       const theme = await this.themeRepository.findOne({
-        where: { id: themeId },
+        where: { title: themeTitle },
       });
 
       if (!theme) {
-        this.logger.warn(`Theme with id ${themeId} not found`);
+        this.logger.warn(`Theme with id ${themeTitle} not found`);
         return {
           status: HttpStatus.NOT_FOUND,
           message: "error",
@@ -152,15 +121,15 @@ export class SubthemeService {
   }
 
   async update(
-    id: number,
+    subthemeTitle: string,
     dto: Partial<Subtheme>,
   ): Promise<Subtheme | { status: HttpStatus; message: string }> {
     try {
       const subtheme: Subtheme = await this.subthemeRepository.findOne({
-        where: { id },
+        where: { title: subthemeTitle },
       });
       if (!subtheme) {
-        this.logger.warn(`Subtheme with id ${id} not found`);
+        this.logger.warn(`Subtheme with Title ${subthemeTitle} not found`);
         return {
           status: HttpStatus.NOT_FOUND,
           message: "error",
@@ -170,14 +139,14 @@ export class SubthemeService {
       Object.assign(subtheme, dto);
       await this.subthemeRepository.save(subtheme);
 
-      this.logger.log(`Updated subtheme with id ${id}`);
+      this.logger.log(`Updated subtheme with Title ${subthemeTitle}`);
 
       return {
         status: HttpStatus.OK,
         message: "successful",
       };
     } catch (error) {
-      const errorMessage = `Failed to update subtheme with id ${id}: ${error.message}`;
+      const errorMessage = `Failed to update subtheme with Title ${subthemeTitle}: ${error.message}`;
       this.logger.error(errorMessage);
 
       return {
@@ -188,14 +157,14 @@ export class SubthemeService {
   }
 
   async remove(
-    id: number,
+    subthemeTitle: string,
   ): Promise<{ statusCode: HttpStatus; message: string }> {
     try {
       const subtheme: Subtheme = await this.subthemeRepository.findOne({
-        where: { id },
+        where: { title: subthemeTitle },
       });
       if (!subtheme) {
-        this.logger.warn(`Subtheme with id ${id} not found`);
+        this.logger.warn(`Subtheme with Title ${subthemeTitle} not found`);
         return {
           statusCode: HttpStatus.NOT_FOUND,
           message: "error",
@@ -204,14 +173,14 @@ export class SubthemeService {
 
       await this.subthemeRepository.remove(subtheme);
 
-      this.logger.log(`Deleted subtheme with id ${id}`);
+      this.logger.log(`Deleted subtheme with Title ${subthemeTitle}`);
 
       return {
         statusCode: HttpStatus.OK,
         message: "successful",
       };
     } catch (error) {
-      const errorMessage = `Failed to delete subtheme with id ${id}: ${error.message}`;
+      const errorMessage = `Failed to delete subtheme with Title ${subthemeTitle}: ${error.message}`;
       this.logger.error(errorMessage);
 
       return {
