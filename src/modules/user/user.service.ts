@@ -8,29 +8,43 @@ import { RolesService } from "../roles/roles.service";
 import { ChangeUserDataDto } from "./dto/change-userdata";
 import { UploadService } from "../upload/upload.service";
 
-import { QuestionService } from "../question/question.service";
-import { Question } from "../question/model/question.model";
-
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly rolesService: RolesService,
-    private readonly uploadRepository: UploadService
+    private readonly uploadRepository: UploadService,
   ) {}
-
-  //private readonly logger = new Logger(UserService.name); Todo
+  private readonly logger = new Logger(UserService.name);
 
   async findOneByEmail(email: string): Promise<User | undefined> {
     return this.userRepository.findOne({ where: { email } });
   }
-  async findById(userId: number): Promise<User> {
+
+  async findById(userId: number): Promise<User | undefined> {
     return this.userRepository.findOne({ where: { id: userId } });
   }
-
-  async findOneById(id: number): Promise<User | undefined> {
-    return this.userRepository.findOne({ where: { id } });
+  async findByUsername(
+    username: string,
+  ): Promise<User | { status: HttpStatus; message: string }> {
+    const user = this.userRepository.findOne({ where: { username: username } });
+    try {
+      if (!user) {
+        this.logger.warn(`Theme with id ${username} not found`);
+        return {
+          status: HttpStatus.NOT_FOUND,
+          message: "error",
+        };
+      }
+      this.logger.log(`Found user with username '${username}'`);
+      return user;
+    } catch (e) {
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: "error",
+      };
+    }
   }
 
   async findAll(): Promise<User[]> {
@@ -38,26 +52,29 @@ export class UserService {
   }
 
   async getUserById(id: number): Promise<User> {
+    Logger.log("User with id: " + id);
     const user = await this.userRepository.findOne({
       where: { id: id },
-      select: ["id", "email", "username", "info","image"]
+      select: ["id", "email", "username", "info", "image"],
     });
+
     if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      Logger.warn("User with id: " + user.id + " wasn't found");
+      throw new HttpException("User not found", HttpStatus.NOT_FOUND);
     }
     Logger.log("User with id: " + user.id + " got");
-  
+
     return user;
   }
-  
+
   async changeMyselfDate(
     dto: ChangeUserDataDto,
     userId: number,
-    imageUrl?: any
+    imageUrl?: any,
   ): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      select: ["id", "email", "username", "info","image"]
+      select: ["id", "email", "username", "info", "image"],
     });
     if (!user) {
       throw new HttpException("User not found", HttpStatus.NOT_FOUND);
@@ -74,14 +91,14 @@ export class UserService {
 
       const updatedUser = await this.userRepository.findOne({
         where: { id: userId },
-        select: ["id", "email", "username", "info", "image"]
+        select: ["id", "email", "username", "info", "image"],
       });
-  
+
       return updatedUser;
     } catch (error) {
       throw new HttpException(
         "Failed to update user",
-        HttpStatus.INTERNAL_SERVER_ERROR
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
@@ -118,7 +135,7 @@ export class UserService {
       Logger.error("Error registration user: ", error.message, error.stack);
       throw new HttpException(
         "Error registration",
-        HttpStatus.INTERNAL_SERVER_ERROR
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }

@@ -11,6 +11,7 @@ export class UploadService {
       api_secret: this.configService.get<string>("CLOUDINARY_SECRET"),
     });
   }
+
   async uploadFile(file: any): Promise<string> {
     return new Promise((resolve, reject) => {
       cloudinary.uploader

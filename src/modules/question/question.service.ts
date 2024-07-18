@@ -189,7 +189,7 @@ export class QuestionService {
       if (!user) {
         return {
           status: HttpStatus.NOT_FOUND,
-          message: "error",
+          message: "User not found",
         };
       }
 
@@ -197,7 +197,7 @@ export class QuestionService {
       if (!question) {
         return {
           status: HttpStatus.NOT_FOUND,
-          message: "error",
+          message: "Question not found",
         };
       }
 
@@ -208,23 +208,36 @@ export class QuestionService {
         );
       }
 
-      user.info.favoriteQuestions.push(question);
+      const index = user.info.favoriteQuestions.findIndex(
+        (q: Question) => q.id === question.id,
+      );
 
-      await this.userRepository.save(user);
+      if (index !== -1) {
+        user.info.favoriteQuestions.splice(index, 1);
+        await this.userRepository.save(user);
 
-      return {
-        status: HttpStatus.OK,
-        message: "successfully",
-      };
+        return {
+          status: HttpStatus.OK,
+          message: "Question removed from favorites",
+        };
+      } else {
+        user.info.favoriteQuestions.push(question);
+        await this.userRepository.save(user);
+
+        return {
+          status: HttpStatus.OK,
+          message: "Question added to favorites",
+        };
+      }
     } catch (error) {
       Logger.error(
-        "Error adding question to favorites: ",
+        "Error adding/removing question to/from favorites: ",
         error.message,
         error.stack,
       );
       return {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: "error",
+        message: "Error adding/removing question to/from favorites",
       };
     }
   }

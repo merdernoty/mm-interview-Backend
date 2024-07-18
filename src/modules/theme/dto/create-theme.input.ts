@@ -1,10 +1,9 @@
-import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { Field, InputType } from "@nestjs/graphql";
 
 @InputType()
 export class CreateThemeInput {
-  @Field()
   @ApiProperty({ description: "Title of the theme" })
   @IsNotEmpty()
   @IsString()
