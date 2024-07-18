@@ -27,8 +27,8 @@ export class ThemeService {
         );
         const relatedThemes: RelatedTheme[] = relatedThemesEntities.map(
           (entity) => ({
-            id: entity.id,
             title: entity.title,
+            image: "default image",
           }),
         );
         theme.relatedThemes = relatedThemes;
@@ -44,37 +44,6 @@ export class ThemeService {
       };
     } catch (error) {
       const errorMessage = `Failed to create theme: ${error.message}`;
-      this.logger.error(errorMessage);
-
-      return {
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: "error",
-      };
-    }
-  }
-
-  async findOneById(
-    id: number,
-  ): Promise<Theme | { status: HttpStatus; message: string }> {
-    try {
-      const theme = await this.themeRepository.findOne({
-        where: { id },
-        relations: ["subthemes", "subthemes.questions"],
-      });
-
-      if (!theme) {
-        this.logger.warn(`Theme with id ${id} not found`);
-        return {
-          status: HttpStatus.NOT_FOUND,
-          message: "error",
-        };
-      }
-
-      this.logger.log(`Found theme with id ${id}`);
-
-      return theme;
-    } catch (error) {
-      const errorMessage = `Failed to find theme with id ${id}: ${error.message}`;
       this.logger.error(errorMessage);
 
       return {
@@ -147,14 +116,16 @@ export class ThemeService {
   }
 
   async update(
-    id: number,
+    themeTitle: string,
     dto: Partial<Theme>,
   ): Promise<Theme | { status: HttpStatus; message: string }> {
     try {
-      const theme = await this.themeRepository.findOne({ where: { id } });
+      const theme = await this.themeRepository.findOne({
+        where: { title: themeTitle },
+      });
 
       if (!theme) {
-        this.logger.warn(`Theme with id ${id} not found`);
+        this.logger.warn(`Theme with id ${themeTitle} not found`);
         return {
           status: HttpStatus.NOT_FOUND,
           message: "error",
@@ -164,11 +135,11 @@ export class ThemeService {
       Object.assign(theme, dto);
       await this.themeRepository.save(theme);
 
-      this.logger.log(`Updated theme with id ${id}`);
+      this.logger.log(`Updated theme with id ${themeTitle}`);
 
       return theme;
     } catch (error) {
-      const errorMessage = `Failed to update theme with id ${id}: ${error.message}`;
+      const errorMessage = `Failed to update theme with id ${themeTitle}: ${error.message}`;
       this.logger.error(errorMessage);
 
       return {
@@ -178,16 +149,16 @@ export class ThemeService {
     }
   }
   async addAwardToTheme(
-    themeId: number,
+    themeTitle: string,
     award: Award,
   ): Promise<{ statusCode: HttpStatus; message: string }> {
     try {
       const theme: Theme = await this.themeRepository.findOne({
-        where: { id: themeId },
+        where: { title: themeTitle },
       });
 
       if (!theme) {
-        this.logger.warn(`Theme with id ${themeId} not found`);
+        this.logger.warn(`Theme with Title ${themeTitle} not found`);
         return {
           statusCode: HttpStatus.NOT_FOUND,
           message: "error",
@@ -198,7 +169,9 @@ export class ThemeService {
 
       await this.themeRepository.save(theme);
 
-      this.logger.log(`Award successfully added to theme with id ${themeId}`);
+      this.logger.log(
+        `Award successfully added to theme with Title ${themeTitle}`,
+      );
 
       return {
         statusCode: HttpStatus.OK,
@@ -206,7 +179,7 @@ export class ThemeService {
       };
     } catch (error) {
       this.logger.error(
-        `Error adding award to theme with id ${themeId}`,
+        `Error adding award to theme with Title ${themeTitle}`,
         error,
       );
 
@@ -218,16 +191,16 @@ export class ThemeService {
   }
 
   async addRelatedToThemes(
-    themeId: number,
+    themeTitle: string,
     relatedThemesIds: number[],
   ): Promise<{ statusCode: HttpStatus; message: string }> {
     try {
       const theme: Theme = await this.themeRepository.findOne({
-        where: { id: themeId },
+        where: { title: themeTitle },
       });
 
       if (!theme) {
-        this.logger.warn(`Theme with id ${themeId} not found`);
+        this.logger.warn(`Theme with Title ${themeTitle} not found`);
         return {
           statusCode: HttpStatus.NOT_FOUND,
           message: "Theme not found",
@@ -244,7 +217,6 @@ export class ThemeService {
         };
       }
 
-      // Fetch all related themes
       const relatedThemes =
         await this.themeRepository.findByIds(relatedThemesIds);
 
@@ -258,10 +230,8 @@ export class ThemeService {
         };
       }
 
-      // Обновляем связанные темы основной темы
       theme.relatedThemes = relatedThemes;
 
-      // Сохраняем изменения в базе данных
       await this.themeRepository.save(theme);
 
       return {
@@ -270,7 +240,7 @@ export class ThemeService {
       };
     } catch (error) {
       this.logger.error(
-        `Error updating related themes for theme with id ${themeId}`,
+        `Error updating related themes for theme with Title ${themeTitle}`,
         error.stack,
       );
       return {
@@ -281,15 +251,15 @@ export class ThemeService {
   }
 
   async remove(
-    id: number,
+    title: string,
   ): Promise<{ statusCode: HttpStatus; message: string }> {
     try {
       const theme: Theme = await this.themeRepository.findOne({
-        where: { id },
+        where: { title: title },
       });
 
       if (!theme) {
-        this.logger.warn(`Theme with id ${id} not found`);
+        this.logger.warn(`Theme with title ${title} not found`);
         return {
           statusCode: HttpStatus.NOT_FOUND,
           message: "error",
@@ -298,14 +268,14 @@ export class ThemeService {
 
       await this.themeRepository.remove(theme);
 
-      this.logger.log(`Deleted theme with id ${id}`);
+      this.logger.log(`Deleted theme with title ${title}`);
 
       return {
         statusCode: HttpStatus.OK,
         message: "successful",
       };
     } catch (error) {
-      const errorMessage = `Failed to delete theme with id ${id}: ${error.message}`;
+      const errorMessage = `Failed to delete theme with title ${title}: ${error.message}`;
       this.logger.error(errorMessage);
 
       return {

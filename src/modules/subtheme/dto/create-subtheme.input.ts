@@ -10,5 +10,5 @@ export class CreateSubthemeInput {
 
   @Field()
   @ApiProperty({ description: "Theme ID" })
-  themeId: number;
+  themeTitle: string;
 }

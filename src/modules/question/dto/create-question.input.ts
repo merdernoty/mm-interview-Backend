@@ -14,5 +14,5 @@ export class CreateQuestionInput {
 
   @Field()
   @ApiProperty({ description: "Theme ID" })
-  subthemeId: number;
+  subthemeTitle: string;
 }

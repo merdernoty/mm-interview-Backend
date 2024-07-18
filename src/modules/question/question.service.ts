@@ -111,14 +111,16 @@ export class QuestionService {
   async create(
     dto: CreateQuestionInput,
   ): Promise<{ status: number; message: string }> {
-    const { subthemeId, ...dtoFields } = dto;
+    const { subthemeTitle, ...dtoFields } = dto;
     try {
       const subtheme = await this.subthemeRepository.findOne({
-        where: { id: subthemeId },
+        where: { title: subthemeTitle },
       });
 
       if (!subtheme) {
-        this.logger.warn(`Subtheme with id ${subthemeId} not found`);
+        this.logger.warn(
+          `Subtheme with subthemeTitle ${subthemeTitle} not found`,
+        );
         return {
           status: HttpStatus.NOT_FOUND,
           message: "error",
