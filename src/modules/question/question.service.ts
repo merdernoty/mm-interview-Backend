@@ -208,13 +208,11 @@ export class QuestionService {
         );
       }
 
-      // Check if the question already exists in user's favoriteQuestions
       const index = user.info.favoriteQuestions.findIndex(
         (q: Question) => q.id === question.id,
       );
 
       if (index !== -1) {
-        // If question exists, remove it from favoriteQuestions
         user.info.favoriteQuestions.splice(index, 1);
         await this.userRepository.save(user);
 
@@ -223,7 +221,6 @@ export class QuestionService {
           message: "Question removed from favorites",
         };
       } else {
-        // If question doesn't exist, add it to favoriteQuestions
         user.info.favoriteQuestions.push(question);
         await this.userRepository.save(user);
 
