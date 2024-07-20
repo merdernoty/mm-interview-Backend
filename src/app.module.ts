@@ -7,6 +7,7 @@ import { Module } from "@nestjs/common";
 import { QuestionModule } from "./modules/question/question.module";
 import { ThemeModule } from "./modules/theme/theme.module";
 import { UploadModule } from "./modules/upload/upload.module";
+import { GraphqlModule } from "./graphQL/Graphql.module";
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { UploadModule } from "./modules/upload/upload.module";
     QuestionModule,
     ThemeModule,
     DatabaseModule,
+    GraphqlModule,
   ],
   controllers: [],
   providers: [],

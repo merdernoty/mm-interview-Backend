@@ -5,6 +5,7 @@ import { Theme } from "./model/theme.model";
 import { CreateThemeInput } from "./dto/create-theme.input";
 import { Logger } from "@nestjs/common";
 import { Award } from "./interface/Award";
+import { StatusMessage } from "./model/status-message.model";
 // import { RelatedTheme } from "./interface/RelatedTheme"
 
 @Injectable()
@@ -84,9 +85,7 @@ export class ThemeService {
     }
   }
 
-  async findAll(
-    depth?: number,
-  ): Promise<Theme[] | { status: HttpStatus; message: string }> {
+  async findAll(depth?: number): Promise<Theme[] | StatusMessage> {
     try {
       const relations = depth && depth > 1 ? ["subthemes"] : [];
       const themes = await this.themeRepository.find({

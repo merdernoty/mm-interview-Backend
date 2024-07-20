@@ -3,10 +3,11 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ThemeController } from "./theme.controller";
 import { ThemeService } from "./theme.service";
 import { Theme } from "./model/theme.model";
+import { ThemeResolver } from "./graphQL/theme.resolver";
 
 @Module({
   imports: [TypeOrmModule.forFeature([Theme])],
-  providers: [ThemeService],
+  providers: [ThemeService, ThemeResolver],
   controllers: [ThemeController],
   exports: [TypeOrmModule.forFeature([Theme])],
 })
