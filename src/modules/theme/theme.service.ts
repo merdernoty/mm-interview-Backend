@@ -6,7 +6,7 @@ import { CreateThemeInput } from "./dto/create-theme.input";
 import { Logger } from "@nestjs/common";
 import { Award } from "./interface/Award";
 import { StatusMessage } from "./model/status-message.model";
-// import { RelatedTheme } from "./interface/RelatedTheme"
+//import { RelatedTheme } from "./interface/RelatedTheme"
 
 @Injectable()
 export class ThemeService {
