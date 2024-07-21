@@ -1,55 +1,44 @@
-import { Injectable, HttpException, HttpStatus, Logger } from "@nestjs/common";
+import { Injectable, Inject } from "@nestjs/common";
 import OpenAI from "openai";
-import { ChatCompletionMessageDto } from "./dto/create-chat-completion.request";
-import { ChatCompletionMessageParam } from "openai/resources";
 
 @Injectable()
 export class OpenaiService {
-  private readonly logger = new Logger(OpenaiService.name);
+  private openai: OpenAI;
 
-  constructor(private readonly openai: OpenAI) {}
-
-  async createChatCompletion(messages: ChatCompletionMessageDto[]) {
-    try {
-      const response = await this.openai.chat.completions.create({
-        messages: messages as ChatCompletionMessageParam[],
-        model: "gpt-3.5-turbo",
-      });
-      return response;
-    } catch (error) {
-      this.handleApiError(error);
-    }
+  constructor(@Inject("OPENAI_API_KEY") private readonly apiKey: string) {
+    this.openai = new OpenAI({ apiKey: this.apiKey });
   }
 
-  private handleApiError(error: any): void {
-    this.logger.error("Ошибка при запросе к OpenAI API", error);
+  async createInterviewQuestion(
+    theme: string,
+    subtheme: string,
+    question: string
+  ): Promise<string> {
+    const prompt = `You are an interviewer helping a candidate prepare for a technical interview. Ask the candidate the following question related to ${theme} - ${subtheme}:
 
-    if (error.response) {
-      const statusCode = error.response.status;
-      const message =
-        error.response.data?.error?.message || "Неизвестная ошибка";
+    Question: ${question}
 
-      if (statusCode === 429) {
-        throw new HttpException(
-          "Вы превысили квоту. Пожалуйста, проверьте свой план и детали оплаты.",
-          HttpStatus.TOO_MANY_REQUESTS,
-        );
-      } else if (statusCode >= 500) {
-        throw new HttpException(
-          `Произошла ошибка на сервере OpenAI. Пожалуйста, повторите попытку позже. Статус ошибки: ${statusCode}`,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      } else {
-        throw new HttpException(
-          `Ошибка при запросе к OpenAI API. Статус ошибки: ${statusCode}, Сообщение: ${message}`,
-          statusCode,
-        );
-      }
-    } else {
-      throw new HttpException(
-        "Произошла ошибка при запросе к OpenAI API. Пожалуйста, повторите попытку позже.",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+    Do not provide the answer. Wait for the candidate to respond.`;
+
+    const response = await this.openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    return response.choices[0].message.content.trim();
+  }
+
+  async evaluateAnswer(
+    userAnswer: string,
+    correctAnswer: string
+  ): Promise<string> {
+    const prompt = `The candidate answered: "${userAnswer}". The correct answer is: "${correctAnswer}". Provide feedback to the candidate.`;
+
+    const response = await this.openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    return response.choices[0].message.content.trim();
   }
 }
