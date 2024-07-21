@@ -45,6 +45,7 @@ enum Difficulty {
 }
 
 type Query {
+  getQuestionById(id: Int!): Question!
   themes(depth: Int): [ThemeResultUnion!]!
 }
 
