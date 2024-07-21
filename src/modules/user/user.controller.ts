@@ -33,9 +33,9 @@ export class UserController {
 
   @ApiOperation({ summary: "Получить всех пользователей" })
   @ApiResponse({ status: 200, type: [User] })
-  @Roles("ADMIN")
+  // @Roles("ADMIN")
   @ApiBearerAuth("JWT-auth")
-  @UseGuards(RolesGuard)
+  // @UseGuards(RolesGuard)
   @Get()
   getAll() {
     return this.userService.findAll();
