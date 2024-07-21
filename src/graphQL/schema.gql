@@ -1,0 +1,56 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type GraphQLAward {
+  id: Int!
+  title: String!
+  image: String!
+  description: String!
+}
+
+type GraphQLRelatedTheme {
+  image: String!
+  title: String!
+}
+
+type Theme {
+  title: String!
+  description: String!
+  image: String!
+  award: GraphQLAward!
+  relatedThemes: [GraphQLRelatedTheme!]!
+  subthemes: [Subtheme!]!
+}
+
+type Subtheme {
+  title: String!
+  theme: Theme!
+  questions: [Question!]!
+}
+
+type Question {
+  id: Int!
+  question: String!
+  answers: [String!]!
+  difficulty: Difficulty!
+  subtheme: Subtheme!
+}
+
+"""The difficulty level of the question"""
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+type Query {
+  themes(depth: Int): [ThemeResultUnion!]!
+}
+
+union ThemeResultUnion = Theme | StatusMessage
+
+type StatusMessage {
+  status: Int!
+  message: String!
+}
