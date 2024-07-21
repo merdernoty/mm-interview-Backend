@@ -85,11 +85,10 @@ export class ThemeService {
     }
   }
 
-  async findAll(depth?: number): Promise<Theme[] | StatusMessage> {
+  async findAll(): Promise<Theme[] | StatusMessage> {
     try {
-      const relations = depth && depth > 1 ? ["subthemes"] : [];
       const themes = await this.themeRepository.find({
-        relations: relations,
+        relations: ["subthemes"],
       });
 
       if (!themes || themes.length === 0) {

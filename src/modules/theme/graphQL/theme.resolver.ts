@@ -7,10 +7,8 @@ export class ThemeResolver {
   constructor(private readonly themeService: ThemeService) {}
 
   @Query(() => [ThemeResultUnion])
-  async themes(
-    @Args("depth", { type: () => Int, nullable: true }) depth?: number,
-  ): Promise<(typeof ThemeResultUnion)[]> {
-    const result = await this.themeService.findAll(depth);
+  async themes(): Promise<(typeof ThemeResultUnion)[]> {
+    const result = await this.themeService.findAll();
     return Array.isArray(result) ? result : [result];
   }
 }
