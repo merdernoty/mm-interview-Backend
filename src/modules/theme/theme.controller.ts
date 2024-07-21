@@ -26,10 +26,8 @@ export class ThemeController {
   }
 
   @Get()
-  async findAll(
-    @Query("depth") depth: number,
-  ): Promise<Theme[] | { status: HttpStatus; message: string }> {
-    return await this.themeService.findAll(depth);
+  async findAll(): Promise<Theme[] | { status: HttpStatus; message: string }> {
+    return await this.themeService.findAll();
   }
 
   @Get(":title")

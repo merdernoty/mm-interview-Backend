@@ -1,19 +1,22 @@
 import { Entity, Column, OneToMany, PrimaryColumn } from "typeorm";
-import { ApiProperty } from "@nestjs/swagger";
 import { Subtheme } from "../../subtheme/model/subtheme.model";
 import { Award } from "../interface/Award";
+import { Field, ObjectType } from "@nestjs/graphql";
+import { GraphQLAward } from "../graphQL/award.model";
+import { GraphQLRelatedTheme } from "../graphQL/related-theme.model";
 
+@ObjectType()
 @Entity()
 export class Theme {
   @PrimaryColumn()
-  @ApiProperty({ description: "Title" })
+  @Field()
   title: string;
   @Column({ nullable: false })
-  @ApiProperty({ description: "Description" })
+  @Field()
   description: string;
 
   @Column({ nullable: false, default: "default-image-url.jpg" })
-  @ApiProperty({ description: "image" })
+  @Field()
   image: string;
 
   @Column("jsonb", {
@@ -25,14 +28,14 @@ export class Theme {
       description: "u are cool",
     },
   })
-  @ApiProperty({ description: "Award" })
+  @Field(() => GraphQLAward)
   award: Award;
 
   @Column("jsonb", { nullable: true, default: [] })
-  @ApiProperty({ description: "Related themes" })
+  @Field(() => [GraphQLRelatedTheme])
   relatedThemes: RelatedTheme[];
 
   @OneToMany(() => Subtheme, (subtheme) => subtheme.theme)
-  @ApiProperty({ description: "List of subthemes" })
+  @Field(() => [Subtheme])
   subthemes: Subtheme[];
 }
