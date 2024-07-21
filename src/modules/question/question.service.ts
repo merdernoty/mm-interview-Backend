@@ -191,7 +191,7 @@ export class QuestionService {
       if (!user) {
         return {
           status: HttpStatus.NOT_FOUND,
-          message: "User not found",
+          message: "error",
         };
       }
 
