@@ -52,6 +52,21 @@ export class UserController {
     return this.userService.getUserById(id);
   }
 
+  @ApiBearerAuth("JWT-auth")
+  @UseGuards(JwtAuthGuard)
+  @Post("/myFav")
+  async getMyFav(@Request() req) {
+    const id = req.user.id;
+    this.logger.log("id " + { id });
+    return this.userService.getFavById(id);
+  }
+  @ApiBearerAuth("JWT-auth")
+  @UseGuards(JwtAuthGuard)
+  @Post("/Fav/:id")
+  async getFav(@Param("id") id: number) {
+    this.logger.log("id " + { id });
+    return this.userService.getFavById(id);
+  }
   @ApiOperation({ summary: "Замена информации самим пользователем" })
   @ApiResponse({ status: 200 })
   @ApiBearerAuth("JWT-auth")
