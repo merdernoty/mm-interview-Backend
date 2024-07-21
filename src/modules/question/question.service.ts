@@ -210,36 +210,95 @@ export class QuestionService {
         );
       }
 
-      const index = user.info.favoriteQuestions.findIndex(
-        (q: Question) => q.id === question.id,
-      );
-
-      if (index !== -1) {
-        user.info.favoriteQuestions.splice(index, 1);
-        await this.userRepository.save(user);
-
+      if (
+        user.info.favoriteQuestions.some((q: Question) => q.id === question.id)
+      ) {
         return {
-          status: HttpStatus.OK,
-          message: "Question removed from favorites",
-        };
-      } else {
-        user.info.favoriteQuestions.push(question);
-        await this.userRepository.save(user);
-
-        return {
-          status: HttpStatus.OK,
-          message: "Question added to favorites",
+          status: HttpStatus.CONFLICT,
+          message: "Question already in favorites",
         };
       }
+
+      user.info.favoriteQuestions.push(question);
+      await this.userRepository.save(user);
+
+      return {
+        status: HttpStatus.OK,
+        message: "Question added to favorites",
+      };
     } catch (error) {
       Logger.error(
-        "Error adding/removing question to/from favorites: ",
+        "Error adding question to favorites: ",
         error.message,
         error.stack,
       );
       return {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: "Error adding/removing question to/from favorites",
+        message: "Error adding question to favorites",
+      };
+    }
+  }
+
+  async removeQuestionFromFavorite(
+    userId: number,
+    questionId: number,
+  ): Promise<{ status: number; message: string }> {
+    try {
+      // Находим пользователя по ID
+      const user = await this.userRepository.findOneById(userId);
+      if (!user) {
+        return {
+          status: HttpStatus.NOT_FOUND,
+          message: "User not found",
+        };
+      }
+
+      // Находим вопрос по ID
+      const question = await this.questionRepository.findOneById(questionId);
+      if (!question) {
+        return {
+          status: HttpStatus.NOT_FOUND,
+          message: "Question not found",
+        };
+      }
+
+      // Проверяем, что вопрос действительно существует
+      if (!(question instanceof Question)) {
+        throw new HttpException(
+          "Invalid question object",
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      // Находим индекс вопроса в избранных
+      const questionIndex = user.info.favoriteQuestions.findIndex(
+        (q: Question) => q.id === question.id,
+      );
+
+      if (questionIndex === -1) {
+        return {
+          status: HttpStatus.CONFLICT,
+          message: "Question not in favorites",
+        };
+      }
+
+      // Удаляем вопрос из избранных
+      user.info.favoriteQuestions.splice(questionIndex, 1);
+      await this.userRepository.save(user);
+
+      return {
+        status: HttpStatus.OK,
+        message: "Question removed from favorites",
+      };
+    } catch (error) {
+      Logger.error(
+        "Error removing question from favorites: ",
+        error.message,
+        error.stack,
+      );
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: "Error removing question from favorites",
       };
     }
   }

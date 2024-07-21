@@ -56,12 +56,13 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Post("/myFav")
   async getMyFav(@Request() req) {
+    this.logger.log("id ");
     const id = req.user.id;
-    this.logger.log("id " + { id });
     return this.userService.getFavById(id);
   }
+
   @ApiBearerAuth("JWT-auth")
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Post("/Fav/:id")
   async getFav(@Param("id") id: number) {
     this.logger.log("id " + { id });
