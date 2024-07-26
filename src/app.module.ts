@@ -1,9 +1,6 @@
 import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
 import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { APP_GUARD } from "@nestjs/core";
-import configuration from "./config/configuration";
-import { UploadModule } from "./modules/upload/upload.module";
 import { RolesModule } from "./modules/roles/roles.module";
 import { AuthModule } from "./modules/auth/auth.module";
 import { OpenaiModule } from "./modules/openai/openai.module";
@@ -15,8 +12,6 @@ import { UploadModule } from "./modules/upload/upload.module";
 import { GraphqlModule } from "./graphQL/Graphql.module";
 import { ConfigModule } from "@nestjs/config";
 import configuration from "./config/configuration";
-
-
 
 @Module({
   imports: [
