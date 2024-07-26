@@ -1,20 +1,28 @@
+import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
+import { APP_GUARD } from "@nestjs/core";
+import configuration from "./config/configuration";
+import { UploadModule } from "./modules/upload/upload.module";
 import { RolesModule } from "./modules/roles/roles.module";
 import { AuthModule } from "./modules/auth/auth.module";
 import { OpenaiModule } from "./modules/openai/openai.module";
 import { UserModule } from "./modules/user/user.module";
-import { DatabaseModule } from "./database/database.module";
-import { Module } from "@nestjs/common";
 import { QuestionModule } from "./modules/question/question.module";
 import { ThemeModule } from "./modules/theme/theme.module";
-import { UploadModule } from "./modules/upload/upload.module";
-import { ConfigModule } from "@nestjs/config";
-import configuration from "./config/configuration";
+import { DatabaseModule } from "./database/database.module";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       load: [configuration],
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 10,
+        limit: 5,
+      },
+    ]),
     UploadModule,
     RolesModule,
     AuthModule,
@@ -24,7 +32,11 @@ import configuration from "./config/configuration";
     ThemeModule,
     DatabaseModule,
   ],
-  controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}
