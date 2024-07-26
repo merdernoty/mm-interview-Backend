@@ -33,9 +33,9 @@ export class UserController {
 
   @ApiOperation({ summary: "Получить всех пользователей" })
   @ApiResponse({ status: 200, type: [User] })
-  @Roles("ADMIN")
+  // @Roles("ADMIN")
   @ApiBearerAuth("JWT-auth")
-  @UseGuards(RolesGuard)
+  // @UseGuards(RolesGuard)
   @Get()
   getAll() {
     return this.userService.findAll();
@@ -52,6 +52,22 @@ export class UserController {
     return this.userService.getUserById(id);
   }
 
+  @ApiBearerAuth("JWT-auth")
+  @UseGuards(JwtAuthGuard)
+  @Post("/myFav")
+  async getMyFav(@Request() req) {
+    this.logger.log("id ");
+    const id = req.user.id;
+    return this.userService.getFavById(id);
+  }
+
+  @ApiBearerAuth("JWT-auth")
+  //@UseGuards(JwtAuthGuard)
+  @Post("/Fav/:id")
+  async getFav(@Param("id") id: number) {
+    this.logger.log("id " + { id });
+    return this.userService.getFavById(id);
+  }
   @ApiOperation({ summary: "Замена информации самим пользователем" })
   @ApiResponse({ status: 200 })
   @ApiBearerAuth("JWT-auth")

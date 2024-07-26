@@ -7,6 +7,8 @@ import { RegDto } from "../auth/dto/reg.dto";
 import { RolesService } from "../roles/roles.service";
 import { ChangeUserDataDto } from "./dto/change-userdata";
 import { UploadService } from "../upload/upload.service";
+import { Question } from "../question/model/question.model";
+import { UserInfo } from "./interface/userInfo";
 
 @Injectable()
 export class UserService {
@@ -138,5 +140,35 @@ export class UserService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async getFavById(id: any): Promise<Question[]> {
+    Logger.log("Fetching user with id: " + id);
+
+    const user = await this.userRepository
+      .createQueryBuilder("user")
+      .select("user.info")
+      .where("user.id = :id", { id })
+      .getOne();
+
+    if (!user) {
+      Logger.warn("User with id: " + id + " wasn't found");
+      throw new HttpException("User not found", HttpStatus.NOT_FOUND);
+    }
+
+    const info = user.info as UserInfo;
+
+    if (
+      !info ||
+      !info.favoriteQuestions ||
+      !Array.isArray(info.favoriteQuestions)
+    ) {
+      Logger.warn(
+        "Favorite questions are not available or in unexpected format",
+      );
+      return [];
+    }
+
+    return info.favoriteQuestions;
   }
 }

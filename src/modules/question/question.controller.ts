@@ -83,4 +83,13 @@ export class QuestionController {
     this.logger.log(`fav from user${Userid}`);
     return this.questionService.addQuestionToFavorite(Userid, questionId);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post("/removeFromFav/:questionId")
+  async removeQuestionFromFav(@Request() req, @Param("questionId") questionId) {
+    this.logger.log(`fav from question ${questionId}`);
+    const Userid = req.user.id;
+    this.logger.log(`fav from user${Userid}`);
+    return this.questionService.removeQuestionFromFavorite(Userid, questionId);
+  }
 }
