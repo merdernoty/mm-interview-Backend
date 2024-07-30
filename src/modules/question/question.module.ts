@@ -3,14 +3,26 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { QuestionService } from "./question.service";
 import { QuestionController } from "./question.controller";
 import { Question } from "./model/question.model";
-import { ThemeModule } from "../theme/theme.module";
+import { Subtheme } from "../subtheme/model/subtheme.model";
+import { SubthemeModule } from "../subtheme/subtheme.module";
+import { User } from "../user/model/user.model";
+import { Role } from "../roles/model/roles.model";
+import { RolesModule } from "../roles/roles.module";
+import { JwtModule } from "@nestjs/jwt";
+import { UploadModule } from "../upload/upload.module";
+import { GraphqlModule } from "../../graphQL/Graphql.module";
+import { QuestionResolver } from "./question.resolver";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Question]),
-    forwardRef(() => ThemeModule),
+    TypeOrmModule.forFeature([User, Role, Question]),
+    forwardRef(() => RolesModule),
+    JwtModule,
+    UploadModule,
+    SubthemeModule,
+    GraphqlModule, // Ensure SubthemeModule is imported
   ],
-  providers: [QuestionService],
+  providers: [QuestionService, QuestionResolver],
   controllers: [QuestionController],
   exports: [QuestionService],
 })

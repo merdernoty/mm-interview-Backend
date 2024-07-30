@@ -1,21 +1,41 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
-import { ApiProperty } from "@nestjs/swagger";
-import { Question } from "../../question/model/question.model";
+import { Entity, Column, OneToMany, PrimaryColumn } from "typeorm";
+import { Subtheme } from "../../subtheme/model/subtheme.model";
+import { Award } from "../interface/Award";
+import { Field, ObjectType } from "@nestjs/graphql";
+import { GraphQLAward } from "../graphQL/award.model";
+import { GraphQLRelatedTheme } from "../graphQL/related-theme.model";
 
+@ObjectType()
 @Entity()
 export class Theme {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column({ nullable: false })
-  @ApiProperty({ description: "Title" })
+  @PrimaryColumn()
+  @Field()
   title: string;
-
   @Column({ nullable: false })
-  @ApiProperty({ description: "Description" })
+  @Field()
   description: string;
 
-  @OneToMany(() => Question, (question) => question.theme)
-  @ApiProperty({ description: "List of questions" })
-  questions: Question[];
+  @Column({ nullable: false, default: "default-image-url.jpg" })
+  @Field()
+  image: string;
+
+  @Column("jsonb", {
+    nullable: true,
+    default: {
+      id: 0,
+      title: "themeAward",
+      image: "jpg",
+      description: "u are cool",
+    },
+  })
+  @Field(() => GraphQLAward)
+  award: Award;
+
+  @Column("jsonb", { nullable: true, default: [] })
+  @Field(() => [GraphQLRelatedTheme])
+  relatedThemes: RelatedTheme[];
+
+  @OneToMany(() => Subtheme, (subtheme) => subtheme.theme)
+  @Field(() => [Subtheme])
+  subthemes: Subtheme[];
 }
