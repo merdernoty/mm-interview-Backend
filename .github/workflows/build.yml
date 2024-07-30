@@ -18,7 +18,7 @@ jobs:
       run: echo "$DOCKER_PASSWORD" | docker login -u "${{ secrets.DOCKER_LOGIN }}" --password-stdin
 
     - name: Build the Docker image
-      run: docker build -t ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:deploy -f Dockerfile .
+      run: docker build -t ${{ secrets.DOCKER_LOGIN }}/{{ secrets.DOCKER_NAME }}:deploy -f Dockerfile .
 
     - name: Push the Docker image
-      run: docker push ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:deploy
+      run: docker push ${{ secrets.DOCKER_LOGIN }}/{{ secrets.DOCKER_NAME }}:deploy
