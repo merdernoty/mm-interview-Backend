@@ -9,7 +9,6 @@ import { QuestionModule } from "./modules/question/question.module";
 import { ThemeModule } from "./modules/theme/theme.module";
 import { DatabaseModule } from "./database/database.module";
 import { UploadModule } from "./modules/upload/upload.module";
-import { GraphqlModule } from "./graphQL/Graphql.module";
 import { ConfigModule } from "@nestjs/config";
 import configuration from "./config/configuration";
 
@@ -32,7 +31,6 @@ import configuration from "./config/configuration";
     QuestionModule,
     ThemeModule,
     DatabaseModule,
-    GraphqlModule,
   ],
   providers: [
     {

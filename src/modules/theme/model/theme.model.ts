@@ -1,22 +1,17 @@
-import { Entity, Column, OneToMany, PrimaryColumn } from "typeorm";
+import { Entity, Column, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Subtheme } from "../../subtheme/model/subtheme.model";
 import { Award } from "../interface/Award";
-import { Field, ObjectType } from "@nestjs/graphql";
-import { GraphQLAward } from "../graphQL/award.model";
-import { GraphQLRelatedTheme } from "../graphQL/related-theme.model";
 
-@ObjectType()
 @Entity()
 export class Theme {
-  @PrimaryColumn()
-  @Field()
+  @PrimaryGeneratedColumn()
+  id: number;
+  @Column({ nullable: false })
   title: string;
   @Column({ nullable: false })
-  @Field()
   description: string;
 
   @Column({ nullable: false, default: "default-image-url.jpg" })
-  @Field()
   image: string;
 
   @Column("jsonb", {
@@ -28,14 +23,11 @@ export class Theme {
       description: "u are cool",
     },
   })
-  @Field(() => GraphQLAward)
   award: Award;
 
   @Column("jsonb", { nullable: true, default: [] })
-  @Field(() => [GraphQLRelatedTheme])
   relatedThemes: RelatedTheme[];
 
   @OneToMany(() => Subtheme, (subtheme) => subtheme.theme)
-  @Field(() => [Subtheme])
   subthemes: Subtheme[];
 }

@@ -4,14 +4,11 @@ import {
   PrimaryGeneratedColumn,
   Index,
   ManyToOne,
-
 } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { Question } from "../../question/model/question.model";
 import { Role } from "src/modules/roles/model/roles.model";
 import { UserInfo } from "../interface/userInfo";
-
-
 
 @Entity()
 export class User {
@@ -27,14 +24,13 @@ export class User {
   @Column()
   email: string;
 
-  @ApiProperty({ description: 'Photo' })
+  @ApiProperty({ description: "Photo" })
   @Column({ default: null })
   image: string;
 
-  @ApiProperty({ description: 'Password' })
+  @ApiProperty({ description: "Password" })
   @Column()
   password: string;
-
 
   @ApiProperty({ description: "User info" })
   @Column({ type: "jsonb", nullable: true })

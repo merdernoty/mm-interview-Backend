@@ -5,7 +5,6 @@ import { Question } from "./model/question.model";
 import { CreateQuestionInput } from "./dto/create-question.input";
 import { Subtheme } from "../subtheme/model/subtheme.model";
 import { User } from "../user/model/user.model";
-import { UserService } from "../user/user.service";
 
 @Injectable()
 export class QuestionService {
@@ -16,8 +15,6 @@ export class QuestionService {
     private readonly subthemeRepository: Repository<Subtheme>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-
-    // private readonly userService: UserService,
   ) {}
 
   private readonly logger = new Logger(QuestionService.name);
@@ -111,16 +108,14 @@ export class QuestionService {
   async create(
     dto: CreateQuestionInput,
   ): Promise<{ status: number; message: string }> {
-    const { subthemeTitle, ...dtoFields } = dto;
+    const { subthemeId, ...dtoFields } = dto;
     try {
       const subtheme = await this.subthemeRepository.findOne({
-        where: { title: subthemeTitle },
+        where: { id: subthemeId },
       });
 
       if (!subtheme) {
-        this.logger.warn(
-          `Subtheme with subthemeTitle ${subthemeTitle} not found`,
-        );
+        this.logger.warn(`Subtheme with subthemeTitle ${subthemeId} not found`);
         return {
           status: HttpStatus.NOT_FOUND,
           message: "error",
@@ -299,6 +294,69 @@ export class QuestionService {
       return {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
         message: "Error removing question from favorites",
+      };
+    }
+  }
+
+  async findOneRandom(): Promise<
+    Question | { status: number; message: string }
+  > {
+    try {
+      const result = await this.questionRepository
+        .createQueryBuilder("question")
+        .orderBy("RANDOM()")
+        .getOne();
+
+      if (!result) {
+        this.logger.warn("No questions found");
+        return {
+          status: HttpStatus.NOT_FOUND,
+          message: "No questions available",
+        };
+      }
+
+      this.logger.log(`Found random question with id ${result.id}`);
+      return result;
+    } catch (error) {
+      const errorMessage = `Failed to find random question: ${error.message}`;
+      this.logger.error(errorMessage);
+
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: "error",
+      };
+    }
+  }
+
+  async findOneRandomBySubtheme(
+    subthemeId: number,
+  ): Promise<Question | { status: number; message: string }> {
+    try {
+      const result = await this.questionRepository
+        .createQueryBuilder("question")
+        .where("question.subthemeId = :subthemeId", { subthemeId })
+        .orderBy("RANDOM()")
+        .getOne();
+
+      if (!result) {
+        this.logger.warn(`No questions found for subthemeId ${subthemeId}`);
+        return {
+          status: HttpStatus.NOT_FOUND,
+          message: "No questions available for the given subtheme",
+        };
+      }
+
+      this.logger.log(
+        `Found random question with id ${result.id} for subthemeId ${subthemeId}`,
+      );
+      return result;
+    } catch (error) {
+      const errorMessage = `Failed to find random question for subthemeId ${subthemeId}: ${error.message}`;
+      this.logger.error(errorMessage);
+
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: "error",
       };
     }
   }
