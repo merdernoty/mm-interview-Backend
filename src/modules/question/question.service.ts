@@ -297,4 +297,67 @@ export class QuestionService {
       };
     }
   }
+
+  async findOneRandom(): Promise<
+    Question | { status: number; message: string }
+  > {
+    try {
+      const result = await this.questionRepository
+        .createQueryBuilder("question")
+        .orderBy("RANDOM()")
+        .getOne();
+
+      if (!result) {
+        this.logger.warn("No questions found");
+        return {
+          status: HttpStatus.NOT_FOUND,
+          message: "No questions available",
+        };
+      }
+
+      this.logger.log(`Found random question with id ${result.id}`);
+      return result;
+    } catch (error) {
+      const errorMessage = `Failed to find random question: ${error.message}`;
+      this.logger.error(errorMessage);
+
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: "error",
+      };
+    }
+  }
+
+  async findOneRandomBySubtheme(
+    subthemeId: number,
+  ): Promise<Question | { status: number; message: string }> {
+    try {
+      const result = await this.questionRepository
+        .createQueryBuilder("question")
+        .where("question.subthemeId = :subthemeId", { subthemeId })
+        .orderBy("RANDOM()")
+        .getOne();
+
+      if (!result) {
+        this.logger.warn(`No questions found for subthemeId ${subthemeId}`);
+        return {
+          status: HttpStatus.NOT_FOUND,
+          message: "No questions available for the given subtheme",
+        };
+      }
+
+      this.logger.log(
+        `Found random question with id ${result.id} for subthemeId ${subthemeId}`,
+      );
+      return result;
+    } catch (error) {
+      const errorMessage = `Failed to find random question for subthemeId ${subthemeId}: ${error.message}`;
+      this.logger.error(errorMessage);
+
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: "error",
+      };
+    }
+  }
 }
