@@ -9,7 +9,6 @@ import { JwtModule } from "@nestjs/jwt";
 import { Question } from "../question/model/question.model";
 import { UploadModule } from "../upload/upload.module";
 
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Role, Question]),

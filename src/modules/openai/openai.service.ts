@@ -12,7 +12,7 @@ export class OpenaiService {
   async createInterviewQuestion(
     theme: string,
     subtheme: string,
-    question: string
+    question: string,
   ): Promise<string> {
     const prompt = `You are an interviewer helping a candidate prepare for a technical interview. Ask the candidate the following question related to ${theme} - ${subtheme}:
 
@@ -30,7 +30,7 @@ export class OpenaiService {
 
   async evaluateAnswer(
     userAnswer: string,
-    correctAnswer: string
+    correctAnswer: string,
   ): Promise<string> {
     const prompt = `The candidate answered: "${userAnswer}". The correct answer is: "${correctAnswer}". Provide feedback to the candidate.`;
 

@@ -16,11 +16,11 @@ import { RolesLevel_access } from "src/helpers/roles-access";
 export class RolesGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
-    private reflector: Reflector
+    private reflector: Reflector,
   ) {}
 
   canActivate(
-    context: ExecutionContext
+    context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     try {
       const requiredRole = this.reflector.getAllAndOverride<string>(ROLES_KEY, [
@@ -37,7 +37,7 @@ export class RolesGuard implements CanActivate {
       if (!authHeader) {
         throw new HttpException(
           "User is not authorized",
-          HttpStatus.UNAUTHORIZED
+          HttpStatus.UNAUTHORIZED,
         );
       }
 
@@ -47,7 +47,7 @@ export class RolesGuard implements CanActivate {
       if (bearer !== "Bearer" || !token) {
         throw new HttpException(
           "User is not authorized",
-          HttpStatus.UNAUTHORIZED
+          HttpStatus.UNAUTHORIZED,
         );
       }
 
@@ -59,7 +59,7 @@ export class RolesGuard implements CanActivate {
       } catch (error) {
         throw new HttpException(
           "User is not authorized",
-          HttpStatus.UNAUTHORIZED
+          HttpStatus.UNAUTHORIZED,
         );
       }
 

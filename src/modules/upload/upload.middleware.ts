@@ -4,8 +4,7 @@ import {
   MulterOptionsFactory,
 } from "@nestjs/platform-express";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
-import { v2 as cloudinary } from 'cloudinary'
-
+import { v2 as cloudinary } from "cloudinary";
 
 @Injectable()
 export class MulterConfigService implements MulterOptionsFactory {
