@@ -1,13 +1,24 @@
-import { Entity, OneToMany, ManyToOne, PrimaryColumn } from "typeorm";
+import {
+  Entity,
+  OneToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Column,
+} from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { Question } from "../../question/model/question.model";
 import { Theme } from "../../theme/model/theme.model";
 import { Field, ObjectType } from "@nestjs/graphql";
+
 @ObjectType()
 @Entity()
 export class Subtheme {
   @Field()
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  @Field()
   title: string;
 
   @Field(() => Theme)

@@ -15,6 +15,7 @@ type GraphQLRelatedTheme {
 }
 
 type Theme {
+  id: Float!
   title: String!
   description: String!
   image: String!
@@ -24,6 +25,7 @@ type Theme {
 }
 
 type Subtheme {
+  id: Float!
   title: String!
   theme: Theme!
   questions: [Question!]!

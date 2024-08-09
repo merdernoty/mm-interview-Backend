@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany, PrimaryColumn } from "typeorm";
+import { Entity, Column, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Subtheme } from "../../subtheme/model/subtheme.model";
 import { Award } from "../interface/Award";
 import { Field, ObjectType } from "@nestjs/graphql";
@@ -8,7 +8,10 @@ import { GraphQLRelatedTheme } from "../graphQL/related-theme.model";
 @ObjectType()
 @Entity()
 export class Theme {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
+  @Field()
+  id: number;
+
   @Field()
   title: string;
   @Column({ nullable: false })

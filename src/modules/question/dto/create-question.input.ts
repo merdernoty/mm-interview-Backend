@@ -18,7 +18,7 @@ export class CreateQuestionInput {
   @Field()
   @ApiProperty({ description: "Subtheme title" })
   @IsNotEmpty({ message: "Subtheme title should not be empty" })
-  subthemeTitle: string;
+  subthemeId: number;
 
   @Field(() => Difficulty)
   @ApiProperty({ description: "Difficulty level", enum: Difficulty })

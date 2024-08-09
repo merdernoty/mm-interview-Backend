@@ -5,7 +5,6 @@ import { Question } from "./model/question.model";
 import { CreateQuestionInput } from "./dto/create-question.input";
 import { Subtheme } from "../subtheme/model/subtheme.model";
 import { User } from "../user/model/user.model";
-import { UserService } from "../user/user.service";
 
 @Injectable()
 export class QuestionService {
@@ -16,8 +15,6 @@ export class QuestionService {
     private readonly subthemeRepository: Repository<Subtheme>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-
-    // private readonly userService: UserService,
   ) {}
 
   private readonly logger = new Logger(QuestionService.name);
@@ -111,16 +108,14 @@ export class QuestionService {
   async create(
     dto: CreateQuestionInput,
   ): Promise<{ status: number; message: string }> {
-    const { subthemeTitle, ...dtoFields } = dto;
+    const { subthemeId, ...dtoFields } = dto;
     try {
       const subtheme = await this.subthemeRepository.findOne({
-        where: { title: subthemeTitle },
+        where: { id: subthemeId },
       });
 
       if (!subtheme) {
-        this.logger.warn(
-          `Subtheme with subthemeTitle ${subthemeTitle} not found`,
-        );
+        this.logger.warn(`Subtheme with subthemeTitle ${subthemeId} not found`);
         return {
           status: HttpStatus.NOT_FOUND,
           message: "error",
