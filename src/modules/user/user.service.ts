@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { User } from "./model/User.model";
+import { User } from "./model/user.model";
 import * as bcrypt from "bcryptjs";
 import { RegDto } from "../auth/dto/reg.dto";
 import { RolesService } from "../roles/roles.service";

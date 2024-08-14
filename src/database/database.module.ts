@@ -26,9 +26,7 @@ import { databaseProviders } from "./database.providers";
         database: configService.get<string>("DB_DATABASE"),
         entities: [User],
         synchronize: true,
-        ssl: {
-          rejectUnauthorized: false,
-        },
+        ssl: false,
         autoLoadEntities: true,
       }),
 

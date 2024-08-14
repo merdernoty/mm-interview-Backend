@@ -1,7 +1,9 @@
-import { Controller, Post, Body } from "@nestjs/common";
+import { Controller, Post, Body, UseInterceptors } from "@nestjs/common";
 import { OpenaiService } from "./openai.service";
 import { Throttle } from "@nestjs/throttler";
+import { CacheInterceptor } from "@nestjs/cache-manager";
 
+@UseInterceptors(CacheInterceptor)
 @Controller("openai")
 export class OpenaiController {
   constructor(private readonly openaiService: OpenaiService) {}

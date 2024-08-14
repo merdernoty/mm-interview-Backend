@@ -10,14 +10,17 @@ import {
   UseGuards,
   Request,
   Logger,
+  UseInterceptors,
 } from "@nestjs/common";
 import { QuestionService } from "./question.service";
 import { CreateQuestionInput } from "./dto/create-question.input";
 import { Question } from "./model/question.model";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../../guard/jwtAuth.guard";
+import { CacheInterceptor } from "@nestjs/cache-manager";
 
 @ApiTags("questions")
+@UseInterceptors(CacheInterceptor)
 @Controller("questions")
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
