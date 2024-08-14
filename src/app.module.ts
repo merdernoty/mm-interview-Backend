@@ -10,13 +10,30 @@ import { ThemeModule } from "./modules/theme/theme.module";
 import { DatabaseModule } from "./database/database.module";
 import { UploadModule } from "./modules/upload/upload.module";
 import { GraphqlModule } from "./graphQL/Graphql.module";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import configuration from "./config/configuration";
+import { CacheModule } from "@nestjs/cache-manager";
+import { redisStore } from "cache-manager-redis-yet";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       load: [configuration],
+      isGlobal: true,
+    }),
+    CacheModule.registerAsync({
+      isGlobal: true,
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        const store = await redisStore({
+          socket: {
+            host: configService.get<string>("redis.host"),
+            port: configService.get<number>("redis.port"),
+          },
+          database: configService.get<number>("redis.db"),
+        });
+        return { store };
+      },
     }),
     ThrottlerModule.forRoot([
       {

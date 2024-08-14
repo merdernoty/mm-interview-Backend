@@ -8,12 +8,15 @@ import {
   Put,
   HttpStatus,
   Query,
+  UseInterceptors,
 } from "@nestjs/common";
 import { ThemeService } from "./theme.service";
 import { CreateThemeInput } from "./dto/create-theme.input";
 import { Theme } from "./model/theme.model";
 import { Award } from "./interface/Award";
+import { CacheInterceptor } from "@nestjs/cache-manager";
 
+@UseInterceptors(CacheInterceptor)
 @Controller("themes")
 export class ThemeController {
   constructor(private readonly themeService: ThemeService) {}

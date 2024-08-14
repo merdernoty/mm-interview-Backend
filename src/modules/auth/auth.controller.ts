@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  UseGuards,
+  UseInterceptors,
+} from "@nestjs/common";
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -12,8 +19,10 @@ import { RolesGuard } from "src/guard/roles.guard";
 import { AuthService } from "./auth.service";
 import { LoginDto } from "./dto/login.dto";
 import { RegDto } from "./dto/reg.dto";
+import { CacheInterceptor } from "@nestjs/cache-manager";
 
 @ApiTags("Авторизация")
+@UseInterceptors(CacheInterceptor)
 @Controller("auth")
 export class AuthController {
   constructor(private authService: AuthService) {}
