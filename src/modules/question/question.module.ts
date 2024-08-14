@@ -10,8 +10,6 @@ import { Role } from "../roles/model/roles.model";
 import { RolesModule } from "../roles/roles.module";
 import { JwtModule } from "@nestjs/jwt";
 import { UploadModule } from "../upload/upload.module";
-import { GraphqlModule } from "../../graphQL/Graphql.module";
-import { QuestionResolver } from "./question.resolver";
 
 @Module({
   imports: [
@@ -20,9 +18,8 @@ import { QuestionResolver } from "./question.resolver";
     JwtModule,
     UploadModule,
     SubthemeModule,
-    GraphqlModule, // Ensure SubthemeModule is imported
   ],
-  providers: [QuestionService, QuestionResolver],
+  providers: [QuestionService],
   controllers: [QuestionController],
   exports: [QuestionService],
 })

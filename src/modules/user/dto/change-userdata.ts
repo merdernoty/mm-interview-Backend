@@ -1,4 +1,4 @@
 export class ChangeUserDataDto {
-    email:string;
-    username:string;
+  email: string;
+  username: string;
 }

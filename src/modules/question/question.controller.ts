@@ -10,14 +10,17 @@ import {
   UseGuards,
   Request,
   Logger,
+  UseInterceptors,
 } from "@nestjs/common";
 import { QuestionService } from "./question.service";
 import { CreateQuestionInput } from "./dto/create-question.input";
 import { Question } from "./model/question.model";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../../guard/jwtAuth.guard";
+import { CacheInterceptor } from "@nestjs/cache-manager";
 
 @ApiTags("questions")
+@UseInterceptors(CacheInterceptor)
 @Controller("questions")
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
@@ -46,6 +49,35 @@ export class QuestionController {
   })
   async findAll(): Promise<{ status: number; message: string } | Question[]> {
     return await this.questionService.findAll();
+  }
+  @Get("/random")
+  @ApiOperation({ summary: "Get a random question" })
+  @ApiResponse({
+    status: 200,
+    description: "Return a random question.",
+    type: Question,
+  })
+  @ApiResponse({ status: 404, description: "No questions found." })
+  async findOneRandom(): Promise<
+    Question | { status: number; message: string }
+  > {
+    return await this.questionService.findOneRandom();
+  }
+  @Get("random/:subthemeId")
+  @ApiOperation({ summary: "Get a random question by subtheme ID" })
+  @ApiResponse({
+    status: 200,
+    description: "Return a random question.",
+    type: Question,
+  })
+  @ApiResponse({
+    status: 404,
+    description: "No questions found for the given subtheme.",
+  })
+  async findOneRandomBySubtheme(
+    @Param("subthemeId") subthemeId: number,
+  ): Promise<Question | { status: number; message: string }> {
+    return await this.questionService.findOneRandomBySubtheme(subthemeId);
   }
 
   @Get(":id")

@@ -24,8 +24,10 @@ import { RolesGuard } from "src/guard/roles.guard";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ChangeUserDataDto } from "./dto/change-userdata";
 import { JwtAuthGuard } from "src/guard/jwtAuth.guard";
+import { CacheInterceptor } from "@nestjs/cache-manager";
 
 @ApiTags("Пользователи")
+@UseInterceptors(CacheInterceptor)
 @Controller("users")
 export class UserController {
   constructor(private userService: UserService) {}

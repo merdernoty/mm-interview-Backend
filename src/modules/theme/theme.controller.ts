@@ -8,12 +8,15 @@ import {
   Put,
   HttpStatus,
   Query,
+  UseInterceptors,
 } from "@nestjs/common";
 import { ThemeService } from "./theme.service";
 import { CreateThemeInput } from "./dto/create-theme.input";
 import { Theme } from "./model/theme.model";
 import { Award } from "./interface/Award";
+import { CacheInterceptor } from "@nestjs/cache-manager";
 
+@UseInterceptors(CacheInterceptor)
 @Controller("themes")
 export class ThemeController {
   constructor(private readonly themeService: ThemeService) {}
@@ -36,7 +39,12 @@ export class ThemeController {
   ): Promise<Theme | { status: HttpStatus; message: string }> {
     return await this.themeService.findOneByTitle(title);
   }
-
+  @Get("id/:id")
+  async findOneById(
+    @Param("id") id: number,
+  ): Promise<Theme | { status: HttpStatus; message: string }> {
+    return await this.themeService.findOneById(id);
+  }
   @Put(":id")
   async update(
     @Param("title") title: string,

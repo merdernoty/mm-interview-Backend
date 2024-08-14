@@ -1,18 +1,20 @@
-import { Controller, Post, Body } from "@nestjs/common";
+import { Controller, Post, Body, UseInterceptors } from "@nestjs/common";
 import { OpenaiService } from "./openai.service";
 import { Throttle } from "@nestjs/throttler";
+import { CacheInterceptor } from "@nestjs/cache-manager";
 
+@UseInterceptors(CacheInterceptor)
 @Controller("openai")
 export class OpenaiController {
   constructor(private readonly openaiService: OpenaiService) {}
 
-  @Post("interview/question")
   @Throttle({
     default: {
       limit: 5,
-      ttl: 5,//change on 86400
+      ttl: 5, // changeto 86400 (24 часа)
     },
   })
+  @Post("interview/question")
   async generateQuestion(
     @Body() body: { theme: string; subtheme: string; question: string }
   ) {
@@ -28,7 +30,7 @@ export class OpenaiController {
   @Throttle({
     default: {
       limit: 5,
-      ttl: 5,//change on 86400
+      ttl: 5, // changetoа 86400 (24 часа)
     },
   })
   @Post("interview/answer")
