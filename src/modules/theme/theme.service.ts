@@ -53,6 +53,36 @@ export class ThemeService {
       };
     }
   }
+  async findOneById(
+    id: number,
+  ): Promise<Theme | { status: HttpStatus; message: string }> {
+    try {
+      const theme = await this.themeRepository.findOne({
+        where: { id },
+        relations: ["subthemes", "subthemes.questions"],
+      });
+
+      if (!theme) {
+        this.logger.warn(`Theme with ID '${id}' not found`);
+        return {
+          status: HttpStatus.NOT_FOUND,
+          message: "Theme not found",
+        };
+      }
+
+      this.logger.log(`Found theme with ID '${id}'`);
+
+      return theme;
+    } catch (error) {
+      const errorMessage = `Failed to find theme with ID '${id}': ${error.message}`;
+      this.logger.error(errorMessage);
+
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: "Error finding theme",
+      };
+    }
+  }
 
   async findOneByTitle(
     title: string,
@@ -88,7 +118,7 @@ export class ThemeService {
   async findAll(): Promise<Theme[] | StatusMessage> {
     try {
       const themes = await this.themeRepository.find({
-        relations: ["subthemes"],
+        relations: ["subthemes", "subthemes.questions"],
       });
 
       if (!themes || themes.length === 0) {

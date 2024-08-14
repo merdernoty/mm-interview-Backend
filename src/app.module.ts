@@ -9,7 +9,6 @@ import { QuestionModule } from "./modules/question/question.module";
 import { ThemeModule } from "./modules/theme/theme.module";
 import { DatabaseModule } from "./database/database.module";
 import { UploadModule } from "./modules/upload/upload.module";
-import { GraphqlModule } from "./graphQL/Graphql.module";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import configuration from "./config/configuration";
 import { CacheModule } from "@nestjs/cache-manager";
@@ -49,7 +48,6 @@ import { redisStore } from "cache-manager-redis-yet";
     QuestionModule,
     ThemeModule,
     DatabaseModule,
-    GraphqlModule,
   ],
   providers: [
     {

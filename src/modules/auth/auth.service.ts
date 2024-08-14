@@ -9,7 +9,7 @@ import { RegDto } from "./dto/reg.dto";
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
   ) {}
 
   async login(dto: LoginDto) {
@@ -19,9 +19,9 @@ export class AuthService {
   }
 
   async reg(dto: RegDto) {
-    const user = await this.userService.create(dto); 
+    const user = await this.userService.create(dto);
     Logger.log("User was logged in successfully");
-    const token = this.generateToken(user); 
+    const token = this.generateToken(user);
     return token;
   }
   async validateToken() {

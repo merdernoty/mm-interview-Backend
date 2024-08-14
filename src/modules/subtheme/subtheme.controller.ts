@@ -29,19 +29,24 @@ export class SubthemeController {
   > {
     return await this.subthemeService.findAll();
   }
-
+  @Get(":id")
+  async findOneById(
+    @Param("id") id: number,
+  ): Promise<Subtheme | { status: HttpStatus; message: string }> {
+    return await this.subthemeService.findOneById(id);
+  }
   @Put(":subthemeTitle")
   async update(
-    @Param("title") title: string,
+    @Param("title") id: number,
     @Body() updatedSubtheme: Partial<Subtheme>,
   ): Promise<Subtheme | { status: HttpStatus; message: string }> {
-    return await this.subthemeService.update(title, updatedSubtheme);
+    return await this.subthemeService.update(id, updatedSubtheme);
   }
 
   @Delete(":id")
   async remove(
-    @Param("title") title: string,
+    @Param("title") id: number,
   ): Promise<{ statusCode: HttpStatus; message: string }> {
-    return await this.subthemeService.remove(title);
+    return await this.subthemeService.remove(id);
   }
 }

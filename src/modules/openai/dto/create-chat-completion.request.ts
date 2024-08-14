@@ -17,4 +17,3 @@ export class ChatCompletionMessageDto {
   @IsNotEmpty()
   content: string;
 }
-

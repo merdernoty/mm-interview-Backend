@@ -39,7 +39,12 @@ export class ThemeController {
   ): Promise<Theme | { status: HttpStatus; message: string }> {
     return await this.themeService.findOneByTitle(title);
   }
-
+  @Get("id/:id")
+  async findOneById(
+    @Param("id") id: number,
+  ): Promise<Theme | { status: HttpStatus; message: string }> {
+    return await this.themeService.findOneById(id);
+  }
   @Put(":id")
   async update(
     @Param("title") title: string,

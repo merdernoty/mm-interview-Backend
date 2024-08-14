@@ -45,7 +45,34 @@ export class SubthemeService {
       };
     }
   }
+  async findOneById(
+    id: number,
+  ): Promise<Subtheme | { status: HttpStatus; message: string }> {
+    try {
+      const subtheme = await this.subthemeRepository.findOne({
+        where: { id },
+        relations: ["questions"],
+      });
+      if (!subtheme) {
+        this.logger.warn(`Subtheme with id '${id}' not found`);
+        return {
+          status: HttpStatus.NOT_FOUND,
+          message: "Subtheme not found",
+        };
+      }
+      this.logger.log(`Found subtheme with id '${id}'`);
 
+      return subtheme;
+    } catch (error) {
+      const errorMessage = `Failed to find subtheme with id '${id}': ${error.message}`;
+      this.logger.error(errorMessage);
+
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: "Internal server error",
+      };
+    }
+  }
   async findAll(): Promise<
     Subtheme[] | { status: HttpStatus; message: string }
   > {
@@ -79,21 +106,20 @@ export class SubthemeService {
   async create(
     dto: CreateSubthemeInput,
   ): Promise<Subtheme | { status: HttpStatus; message: string }> {
-    const { themeTitle, ...dtoFields } = dto;
+    const { themeId, ...dtoFields } = dto;
 
     try {
       const theme = await this.themeRepository.findOne({
-        where: { title: themeTitle },
+        where: { id: themeId },
       });
 
       if (!theme) {
-        this.logger.warn(`Theme with id ${themeTitle} not found`);
+        this.logger.warn(`Theme with id ${themeId} not found`);
         return {
           status: HttpStatus.NOT_FOUND,
           message: "error",
         };
       }
-
       const newSubtheme = this.subthemeRepository.create({
         ...dtoFields,
         theme: theme,
@@ -121,15 +147,15 @@ export class SubthemeService {
   }
 
   async update(
-    subthemeTitle: string,
+    subthemeId: number,
     dto: Partial<Subtheme>,
   ): Promise<Subtheme | { status: HttpStatus; message: string }> {
     try {
       const subtheme: Subtheme = await this.subthemeRepository.findOne({
-        where: { title: subthemeTitle },
+        where: { id: subthemeId },
       });
       if (!subtheme) {
-        this.logger.warn(`Subtheme with Title ${subthemeTitle} not found`);
+        this.logger.warn(`Subtheme with Title ${subthemeId} not found`);
         return {
           status: HttpStatus.NOT_FOUND,
           message: "error",
@@ -139,14 +165,14 @@ export class SubthemeService {
       Object.assign(subtheme, dto);
       await this.subthemeRepository.save(subtheme);
 
-      this.logger.log(`Updated subtheme with Title ${subthemeTitle}`);
+      this.logger.log(`Updated subtheme with Title ${subthemeId}`);
 
       return {
         status: HttpStatus.OK,
         message: "successful",
       };
     } catch (error) {
-      const errorMessage = `Failed to update subtheme with Title ${subthemeTitle}: ${error.message}`;
+      const errorMessage = `Failed to update subtheme with Title ${subthemeId}: ${error.message}`;
       this.logger.error(errorMessage);
 
       return {
@@ -157,14 +183,14 @@ export class SubthemeService {
   }
 
   async remove(
-    subthemeTitle: string,
+    subthemeId: number,
   ): Promise<{ statusCode: HttpStatus; message: string }> {
     try {
       const subtheme: Subtheme = await this.subthemeRepository.findOne({
-        where: { title: subthemeTitle },
+        where: { id: subthemeId },
       });
       if (!subtheme) {
-        this.logger.warn(`Subtheme with Title ${subthemeTitle} not found`);
+        this.logger.warn(`Subtheme with Title ${subthemeId} not found`);
         return {
           statusCode: HttpStatus.NOT_FOUND,
           message: "error",
@@ -173,14 +199,14 @@ export class SubthemeService {
 
       await this.subthemeRepository.remove(subtheme);
 
-      this.logger.log(`Deleted subtheme with Title ${subthemeTitle}`);
+      this.logger.log(`Deleted subtheme with Title ${subthemeId}`);
 
       return {
         statusCode: HttpStatus.OK,
         message: "successful",
       };
     } catch (error) {
-      const errorMessage = `Failed to delete subtheme with Title ${subthemeTitle}: ${error.message}`;
+      const errorMessage = `Failed to delete subtheme with Title ${subthemeId}: ${error.message}`;
       this.logger.error(errorMessage);
 
       return {
