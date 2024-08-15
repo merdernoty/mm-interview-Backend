@@ -11,7 +11,10 @@ export class Theme {
   @Column({ nullable: false })
   description: string;
 
-  @Column({ nullable: false, default: "default-image-url.jpg" })
+  @Column({ nullable: true, default: "one-one" })
+  type: string;
+
+  @Column({ nullable: true })
   image: string;
 
   @Column("jsonb", {

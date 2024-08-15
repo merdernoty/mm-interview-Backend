@@ -6,6 +6,7 @@ import { CreateThemeInput } from "./dto/create-theme.input";
 import { Logger } from "@nestjs/common";
 import { Award } from "./interface/Award";
 import { StatusMessage } from "./model/status-message.model";
+import { UploadService } from "../upload/upload.service";
 //import { RelatedTheme } from "./interface/RelatedTheme"
 
 @Injectable()
@@ -13,35 +14,41 @@ export class ThemeService {
   constructor(
     @InjectRepository(Theme)
     private readonly themeRepository: Repository<Theme>,
+    private readonly uploadRepository: UploadService
   ) {}
   private readonly logger = new Logger(ThemeService.name);
 
   async create(
     dto: CreateThemeInput,
+    imageUrl: any
   ): Promise<{ status: number; message: string }> {
     try {
       const theme: Theme = this.themeRepository.create(dto);
 
+      if (imageUrl) {
+        const uploadedImageUrl =
+          await this.uploadRepository.uploadFile(imageUrl);
+        theme.image = uploadedImageUrl;
+      }
       if (dto.RelatedThemesIds && dto.RelatedThemesIds.length > 0) {
         const relatedThemesEntities = await this.themeRepository.findByIds(
-          dto.RelatedThemesIds,
+          dto.RelatedThemesIds
         );
         const relatedThemes: RelatedTheme[] = relatedThemesEntities.map(
           (entity) => ({
             title: entity.title,
             image: "default image",
-          }),
+          })
         );
         theme.relatedThemes = relatedThemes;
       }
-
       await this.themeRepository.save(theme);
 
       this.logger.log(`Created theme with title: ${dto.title}`);
 
       return {
         status: HttpStatus.CREATED,
-        message: "successful",
+        message: "Theme created successfully",
       };
     } catch (error) {
       const errorMessage = `Failed to create theme: ${error.message}`;
@@ -49,12 +56,13 @@ export class ThemeService {
 
       return {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: "error",
+        message: "Internal server error",
       };
     }
   }
+
   async findOneById(
-    id: number,
+    id: number
   ): Promise<Theme | { status: HttpStatus; message: string }> {
     try {
       const theme = await this.themeRepository.findOne({
@@ -85,7 +93,7 @@ export class ThemeService {
   }
 
   async findOneByTitle(
-    title: string,
+    title: string
   ): Promise<Theme | { status: HttpStatus; message: string }> {
     try {
       const theme = await this.themeRepository.findOne({
@@ -145,7 +153,7 @@ export class ThemeService {
 
   async update(
     themeTitle: string,
-    dto: Partial<Theme>,
+    dto: Partial<Theme>
   ): Promise<Theme | { status: HttpStatus; message: string }> {
     try {
       const theme = await this.themeRepository.findOne({
@@ -178,7 +186,7 @@ export class ThemeService {
   }
   async addAwardToTheme(
     themeTitle: string,
-    award: Award,
+    award: Award
   ): Promise<{ statusCode: HttpStatus; message: string }> {
     try {
       const theme: Theme = await this.themeRepository.findOne({
@@ -198,7 +206,7 @@ export class ThemeService {
       await this.themeRepository.save(theme);
 
       this.logger.log(
-        `Award successfully added to theme with Title ${themeTitle}`,
+        `Award successfully added to theme with Title ${themeTitle}`
       );
 
       return {
@@ -208,7 +216,7 @@ export class ThemeService {
     } catch (error) {
       this.logger.error(
         `Error adding award to theme with Title ${themeTitle}`,
-        error,
+        error
       );
 
       return {
@@ -220,7 +228,7 @@ export class ThemeService {
 
   async addRelatedToThemes(
     themeTitle: string,
-    relatedThemesIds: number[],
+    relatedThemesIds: number[]
   ): Promise<{ statusCode: HttpStatus; message: string }> {
     try {
       const theme: Theme = await this.themeRepository.findOne({
@@ -237,7 +245,7 @@ export class ThemeService {
 
       if (!Array.isArray(relatedThemesIds) || relatedThemesIds.length === 0) {
         this.logger.warn(
-          `No related themes ids provided or invalid format: ${relatedThemesIds.join(", ")}`,
+          `No related themes ids provided or invalid format: ${relatedThemesIds.join(", ")}`
         );
         return {
           statusCode: HttpStatus.BAD_REQUEST,
@@ -250,7 +258,7 @@ export class ThemeService {
 
       if (relatedThemes.length !== relatedThemesIds.length) {
         this.logger.warn(
-          `One or more related themes not found: ${relatedThemesIds.join(", ")}`,
+          `One or more related themes not found: ${relatedThemesIds.join(", ")}`
         );
         return {
           statusCode: HttpStatus.NOT_FOUND,
@@ -269,7 +277,7 @@ export class ThemeService {
     } catch (error) {
       this.logger.error(
         `Error updating related themes for theme with Title ${themeTitle}`,
-        error.stack,
+        error.stack
       );
       return {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -279,7 +287,7 @@ export class ThemeService {
   }
 
   async remove(
-    title: string,
+    title: string
   ): Promise<{ statusCode: HttpStatus; message: string }> {
     try {
       const theme: Theme = await this.themeRepository.findOne({
