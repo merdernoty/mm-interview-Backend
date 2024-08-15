@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
-import { APP_GUARD } from "@nestjs/core";
+import { APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
 import { RolesModule } from "./modules/roles/roles.module";
 import { AuthModule } from "./modules/auth/auth.module";
 import { OpenaiModule } from "./modules/openai/openai.module";
@@ -13,9 +13,12 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import configuration from "./config/configuration";
 import { CacheModule } from "@nestjs/cache-manager";
 import { redisStore } from "cache-manager-redis-yet";
+import { PrometheusModule } from "@willsoto/nestjs-prometheus";
+import { LoggingInterceptor } from "./logging.interceptor";
 
 @Module({
   imports: [
+    PrometheusModule.register(),
     ConfigModule.forRoot({
       load: [configuration],
       isGlobal: true,
@@ -53,6 +56,10 @@ import { redisStore } from "cache-manager-redis-yet";
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
     },
   ],
 })
