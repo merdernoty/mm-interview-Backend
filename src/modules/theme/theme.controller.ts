@@ -9,12 +9,14 @@ import {
   HttpStatus,
   Query,
   UseInterceptors,
+  UploadedFile,
 } from "@nestjs/common";
 import { ThemeService } from "./theme.service";
 import { CreateThemeInput } from "./dto/create-theme.input";
 import { Theme } from "./model/theme.model";
 import { Award } from "./interface/Award";
 import { CacheInterceptor } from "@nestjs/cache-manager";
+import { FileInterceptor } from "@nestjs/platform-express";
 
 @UseInterceptors(CacheInterceptor)
 @Controller("themes")
@@ -22,10 +24,12 @@ export class ThemeController {
   constructor(private readonly themeService: ThemeService) {}
 
   @Post()
+  @UseInterceptors(FileInterceptor("image"))
   async create(
     @Body() createThemeInput: CreateThemeInput,
+    @UploadedFile() imageUrl: any
   ): Promise<Theme | { status: HttpStatus; message: string }> {
-    return await this.themeService.create(createThemeInput);
+    return await this.themeService.create(createThemeInput, imageUrl);
   }
 
   @Get()
@@ -35,27 +39,27 @@ export class ThemeController {
 
   @Get(":title")
   async findOneByTitle(
-    @Param("title") title: string,
+    @Param("title") title: string
   ): Promise<Theme | { status: HttpStatus; message: string }> {
     return await this.themeService.findOneByTitle(title);
   }
   @Get("id/:id")
   async findOneById(
-    @Param("id") id: number,
+    @Param("id") id: number
   ): Promise<Theme | { status: HttpStatus; message: string }> {
     return await this.themeService.findOneById(id);
   }
   @Put(":id")
   async update(
     @Param("title") title: string,
-    @Body() updatedTheme: Partial<Theme>,
+    @Body() updatedTheme: Partial<Theme>
   ): Promise<Theme | { status: HttpStatus; message: string }> {
     return await this.themeService.update(title, updatedTheme);
   }
   @Post(":themeId/award")
   async addAwardToTheme(
     @Param("title") title: string,
-    @Body() award: Award,
+    @Body() award: Award
   ): Promise<{ statusCode: HttpStatus; message: string }> {
     return this.themeService.addAwardToTheme(title, award);
   }
@@ -63,14 +67,14 @@ export class ThemeController {
   @Put("/:themeId/related")
   async addRelatedToThemes(
     @Param("title") title: string,
-    @Body("relatedThemesIds") relatedThemesIds: number[],
+    @Body("relatedThemesIds") relatedThemesIds: number[]
   ): Promise<{ statusCode: HttpStatus; message: string }> {
     return this.themeService.addRelatedToThemes(title, relatedThemesIds);
   }
 
   @Delete(":id")
   async remove(
-    @Param("title") title: string,
+    @Param("title") title: string
   ): Promise<{ statusCode: HttpStatus; message: string }> {
     return await this.themeService.remove(title);
   }
