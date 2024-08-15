@@ -35,9 +35,9 @@ export class UserController {
 
   @ApiOperation({ summary: "Получить всех пользователей" })
   @ApiResponse({ status: 200, type: [User] })
-  // @Roles("ADMIN")
+  @Roles("ADMIN")
   @ApiBearerAuth("JWT-auth")
-  // @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard)
   @Get()
   getAll() {
     return this.userService.findAll();
@@ -56,7 +56,7 @@ export class UserController {
 
   @ApiBearerAuth("JWT-auth")
   @UseGuards(JwtAuthGuard)
-  @Post("/myFav")
+  @Post("/favourite")
   async getMyFav(@Request() req) {
     this.logger.log("id ");
     const id = req.user.id;
@@ -64,8 +64,8 @@ export class UserController {
   }
 
   @ApiBearerAuth("JWT-auth")
-  //@UseGuards(JwtAuthGuard)
-  @Post("/Fav/:id")
+  @UseGuards(JwtAuthGuard)
+  @Post("/favourite/:id")
   async getFav(@Param("id") id: number) {
     this.logger.log("id " + { id });
     return this.userService.getFavById(id);
@@ -91,7 +91,7 @@ export class UserController {
   @Roles("ADMIN")
   @ApiBearerAuth("JWT-auth")
   @UseGuards(RolesGuard)
-  @Get("/byEmail/:email")
+  @Get("/email/:email")
   getUserByEmail(@Param("email") email: string) {
     return this.userService.findOneByEmail(email);
   }
@@ -101,7 +101,7 @@ export class UserController {
   @Roles("ADMIN")
   @ApiBearerAuth("JWT-auth")
   @UseGuards(RolesGuard)
-  @Get("byId/:id")
+  @Get("id/:id")
   getUserById(@Param("id") id: number) {
     return this.userService.getUserById(id);
   }
@@ -111,7 +111,7 @@ export class UserController {
   @Roles("USER")
   @ApiBearerAuth("JWT-auth")
   @UseGuards(RolesGuard)
-  @Get("byUsername/:username")
+  @Get("username/:username")
   getUserByUsername(@Param("username") username: string) {
     this.logger.log(`Запрос на получение пользователя с username $`);
 
