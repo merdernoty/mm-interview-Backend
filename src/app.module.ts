@@ -34,7 +34,7 @@ import { LoggingInterceptor } from "./logging.interceptor";
           },
           database: configService.get<number>("redis.db"),
         });
-        return { store };
+        return { store, ttl: 45 };
       },
     }),
     ThrottlerModule.forRoot([

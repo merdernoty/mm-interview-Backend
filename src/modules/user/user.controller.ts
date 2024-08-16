@@ -24,7 +24,7 @@ import { RolesGuard } from "src/guard/roles.guard";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ChangeUserDataDto } from "./dto/change-userdata";
 import { JwtAuthGuard } from "src/guard/jwtAuth.guard";
-import { CacheInterceptor } from "@nestjs/cache-manager";
+import { CacheInterceptor, CacheTTL } from "@nestjs/cache-manager";
 
 @ApiTags("Пользователи")
 @UseInterceptors(CacheInterceptor)
@@ -88,6 +88,7 @@ export class UserController {
 
   @ApiOperation({ summary: "Получить пользователя по Email" })
   @ApiResponse({ status: 200, type: [User] })
+  @CacheTTL(60)
   @Roles("ADMIN")
   @ApiBearerAuth("JWT-auth")
   @UseGuards(RolesGuard)
@@ -98,6 +99,7 @@ export class UserController {
 
   @ApiOperation({ summary: "Получить пользователя по id" })
   @ApiResponse({ status: 200, type: [User] })
+  @CacheTTL(60)
   @Roles("ADMIN")
   @ApiBearerAuth("JWT-auth")
   @UseGuards(RolesGuard)
@@ -108,6 +110,7 @@ export class UserController {
 
   @ApiOperation({ summary: "Получить пользователя по id" })
   @ApiResponse({ status: 200, type: [User] })
+  @CacheTTL(60)
   @Roles("USER")
   @ApiBearerAuth("JWT-auth")
   @UseGuards(RolesGuard)

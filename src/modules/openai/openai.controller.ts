@@ -1,7 +1,7 @@
 import { Controller, Post, Body, UseInterceptors } from "@nestjs/common";
 import { OpenaiService } from "./openai.service";
 import { Throttle } from "@nestjs/throttler";
-import { CacheInterceptor } from "@nestjs/cache-manager";
+import { CacheInterceptor, CacheTTL } from "@nestjs/cache-manager";
 
 @UseInterceptors(CacheInterceptor)
 @Controller("openai")
@@ -16,13 +16,13 @@ export class OpenaiController {
   })
   @Post("interview/question")
   async generateQuestion(
-    @Body() body: { theme: string; subtheme: string; question: string },
+    @Body() body: { theme: string; subtheme: string; question: string }
   ) {
     const { theme, subtheme, question } = body;
     const interviewQuestion = await this.openaiService.createInterviewQuestion(
       theme,
       subtheme,
-      question,
+      question
     );
     return { question: interviewQuestion };
   }
@@ -35,12 +35,12 @@ export class OpenaiController {
   })
   @Post("interview/answer")
   async evaluateAnswer(
-    @Body() body: { userAnswer: string; correctAnswer: string },
+    @Body() body: { userAnswer: string; correctAnswer: string }
   ) {
     const { userAnswer, correctAnswer } = body;
     const evaluation = await this.openaiService.evaluateAnswer(
       userAnswer,
-      correctAnswer,
+      correctAnswer
     );
     return { feedback: evaluation };
   }

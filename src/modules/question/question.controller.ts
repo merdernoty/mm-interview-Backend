@@ -17,7 +17,7 @@ import { CreateQuestionInput } from "./dto/create-question.input";
 import { Question } from "./model/question.model";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../../guard/jwtAuth.guard";
-import { CacheInterceptor } from "@nestjs/cache-manager";
+import { CacheInterceptor, CacheTTL } from "@nestjs/cache-manager";
 
 @ApiTags("questions")
 @UseInterceptors(CacheInterceptor)
@@ -35,11 +35,12 @@ export class QuestionController {
   })
   @ApiResponse({ status: 400, description: "Invalid input." })
   async create(
-    @Body() createQuestionInput: CreateQuestionInput,
+    @Body() createQuestionInput: CreateQuestionInput
   ): Promise<{ status: number; message: string }> {
     return this.questionService.create(createQuestionInput);
   }
 
+  @CacheTTL(30)
   @Get()
   @ApiOperation({ summary: "Get all questions" })
   @ApiResponse({
@@ -75,11 +76,12 @@ export class QuestionController {
     description: "No questions found for the given subtheme.",
   })
   async findOneRandomBySubtheme(
-    @Param("subthemeId") subthemeId: number,
+    @Param("subthemeId") subthemeId: number
   ): Promise<Question | { status: number; message: string }> {
     return await this.questionService.findOneRandomBySubtheme(subthemeId);
   }
 
+  @CacheTTL(60)
   @Get(":id")
   @ApiOperation({ summary: "Get a question by ID" })
   @ApiResponse({
@@ -89,7 +91,7 @@ export class QuestionController {
   })
   @ApiResponse({ status: 404, description: "Question not found." })
   async findOneByid(
-    @Param("id") id: number,
+    @Param("id") id: number
   ): Promise<Question | { status: number; message: string }> {
     return await this.questionService.findOneById(id);
   }
@@ -102,7 +104,7 @@ export class QuestionController {
   })
   @ApiResponse({ status: 404, description: "Question not found." })
   async remove(
-    @Param("id") id: number,
+    @Param("id") id: number
   ): Promise<{ statusCode: number; message: string }> {
     return this.questionService.remove(id);
   }
