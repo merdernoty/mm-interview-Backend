@@ -19,7 +19,7 @@ import { RolesGuard } from "src/guard/roles.guard";
 import { AuthService } from "./auth.service";
 import { LoginDto } from "./dto/login.dto";
 import { RegDto } from "./dto/reg.dto";
-import { CacheInterceptor } from "@nestjs/cache-manager";
+import { CacheInterceptor, CacheTTL } from "@nestjs/cache-manager";
 
 @ApiTags("Авторизация")
 @UseInterceptors(CacheInterceptor)
@@ -49,6 +49,7 @@ export class AuthController {
     summary: "Проверка токена на валидность",
   })
   @ApiResponse({ status: 200 })
+  @CacheTTL(60)
   @Get("/validate")
   async validateToken() {
     return this.authService.validateToken();

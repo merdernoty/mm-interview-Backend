@@ -15,7 +15,7 @@ import { ThemeService } from "./theme.service";
 import { CreateThemeInput } from "./dto/create-theme.input";
 import { Theme } from "./model/theme.model";
 import { Award } from "./interface/Award";
-import { CacheInterceptor } from "@nestjs/cache-manager";
+import { CacheInterceptor, CacheTTL } from "@nestjs/cache-manager";
 import { FileInterceptor } from "@nestjs/platform-express";
 
 @UseInterceptors(CacheInterceptor)
@@ -24,6 +24,7 @@ export class ThemeController {
   constructor(private readonly themeService: ThemeService) {}
 
   @Post()
+  @CacheTTL(60)
   @UseInterceptors(FileInterceptor("image"))
   async create(
     @Body() createThemeInput: CreateThemeInput,
@@ -32,17 +33,21 @@ export class ThemeController {
     return await this.themeService.create(createThemeInput, imageUrl);
   }
 
+  @CacheTTL(60)
   @Get()
   async findAll(): Promise<Theme[] | { status: HttpStatus; message: string }> {
     return await this.themeService.findAll();
   }
 
+  @CacheTTL(60)
   @Get(":title")
   async findOneByTitle(
     @Param("title") title: string
   ): Promise<Theme | { status: HttpStatus; message: string }> {
     return await this.themeService.findOneByTitle(title);
   }
+
+  @CacheTTL(60)
   @Get("id/:id")
   async findOneById(
     @Param("id") id: number
