@@ -79,8 +79,8 @@ export class ThemeController {
 
   @Delete(":id")
   async remove(
-    @Param("title") title: string
+    @Param("id") id: number
   ): Promise<{ statusCode: HttpStatus; message: string }> {
-    return await this.themeService.remove(title);
+    return await this.themeService.remove(id);
   }
 }
