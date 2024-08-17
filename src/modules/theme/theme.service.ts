@@ -287,15 +287,15 @@ export class ThemeService {
   }
 
   async remove(
-    title: string
+    id: number
   ): Promise<{ statusCode: HttpStatus; message: string }> {
     try {
       const theme: Theme = await this.themeRepository.findOne({
-        where: { title: title },
+        where: { id: id },
       });
 
       if (!theme) {
-        this.logger.warn(`Theme with title ${title} not found`);
+        this.logger.warn(`Theme with id ${id} not found`);
         return {
           statusCode: HttpStatus.NOT_FOUND,
           message: "error",
@@ -304,14 +304,14 @@ export class ThemeService {
 
       await this.themeRepository.remove(theme);
 
-      this.logger.log(`Deleted theme with title ${title}`);
+      this.logger.log(`Deleted theme with id ${id}`);
 
       return {
         statusCode: HttpStatus.OK,
         message: "successful",
       };
     } catch (error) {
-      const errorMessage = `Failed to delete theme with title ${title}: ${error.message}`;
+      const errorMessage = `Failed to delete theme with id ${id}: ${error.message}`;
       this.logger.error(errorMessage);
 
       return {
